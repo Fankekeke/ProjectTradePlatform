@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.AnnexInfoMapper">
+
+    <sql id="baseResult">
+        ai.`id`,
+        ai.`code`,
+        ai.`annex_name` AS annexName,
+        ai.`annex_local` AS annexLocal,
+        ai.`annex_type` AS annexType,
+        ai.`annex_anther` AS annexAnther,
+        ai.`annex_price` AS annexPrice,
+        ai.`pro_code` AS proCode,
+        ai.`is_enable` AS isEnable,
+        ai.`upload_date` AS uploadDate,
+        ai.`status`,
+        ai.`pic`,
+        ai.`word_count` AS wordCount,
+        ai.`remark`
+    </sql>
+
+    <sql id="baseParam">
+        <if test="annexInfo.annexName != null and annexInfo.annexName != ''">
+            AND ai.`annex_name` LIKE CONCAT('%',#{annexInfo.annexName},'%')
+        </if>
+        <if test="annexInfo.annexType != null and annexInfo.annexType != ''">
+            AND ai.`annex_type` = #{annexInfo.annexType}
+        </if>
+        <if test="annexInfo.proCode != null and annexInfo.proCode != ''">
+            AND ai.`pro_code` LIKE CONCAT('%',#{annexInfo.proCode},'%')
+        </if>
+        <if test="annexInfo.isEnable != null and annexInfo.isEnable != '' or annexInfo.isEnable == 0">
+            AND ai.`is_enable` = #{annexInfo.isEnable}
+        </if>
+        <if test="annexInfo.status != null and annexInfo.status != ''">
+            AND ai.`status` = #{annexInfo.status}
+        </if>
+    </sql>
+
+    <!-- 分页查询附件信息 -->
+    <select id="page" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        GROUP_CONCAT( pi.pro_name ) AS proName,
+        team.players,
+        team.avatar
+        FROM
+        annex_info AS ai
+        LEFT JOIN team_info AS team ON (team.id = ai.annex_anther)
+        LEFT JOIN project_info pi ON FIND_IN_SET( pi.`code`, ai.`pro_code` )
+        WHERE
+        1 = 1
+        <include refid="baseParam"/>
+        GROUP BY ai.id
+    </select>
+
+    <!-- 门户端附件查询 -->
+    <select id="selectAnnexPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        ai.`code`,
+        ai.`annex_name` AS annexName,
+        ai.`annex_type` AS annexType,
+        ai.`annex_price` AS annexPrice,
+        ai.`pic`,
+        ai.`word_count` AS wordCount,
+        ai.`remark`,
+        COUNT(ao.annex_code) AS sales
+        FROM
+        annex_info ai
+        LEFT JOIN annex_order ao ON (ao.annex_code = ai.code)
+        WHERE ai.is_enable = 1 AND ai.status = 2
+        <if test="key != null and key != ''">
+            AND ai.annex_name LIKE CONCAT('%',#{key},'%')
+        </if>
+        GROUP BY ai.code
+        <if test="sortType == 2">
+            ORDER BY COUNT(ao.annex_code) DESC
+        </if>
+        <if test="sortType == 3">
+            ORDER BY ai.`annex_price` DESC
+        </if>
+        <if test="sortType == 4">
+            ORDER BY ai.upload_date DESC
+        </if>
+    </select>
+
+</mapper>

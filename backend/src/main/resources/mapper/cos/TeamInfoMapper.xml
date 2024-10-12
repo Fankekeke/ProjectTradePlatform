@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.TeamInfoMapper">
+
+    <sql id="baseResult">
+        ti.id,
+        ti.players,
+        ti.admin_user AS adminUser,
+        ti.avatar,
+        ti.balance,
+        ti.remarks,
+        ti.status,
+        ti.work_time AS workTime,
+        ti.deploy_time AS deployTime
+    </sql>
+
+    <sql id="baseParam">
+        <if test="teamInfo.status != null">
+            AND ti.status = #{teamInfo.status}
+        </if>
+        <if test="teamInfo.sex != null">
+            AND tu.SSEX = #{teamInfo.sex}
+        </if>
+        <if test="teamInfo.players != null and teamInfo.players != ''">
+            AND ti.players LIKE CONCAT('%',#{teamInfo.players},'%')
+        </if>
+    </sql>
+
+    <select id="getTeamByPage" resultType="java.util.LinkedHashMap" parameterType="com.fate.archer.cos.entity.TeamInfo">
+        SELECT
+        <include refid="baseResult"/>,
+        tu.USERNAME AS username,
+        tu.EMAIL AS email,
+        tu.MOBILE AS mobile,
+        tu.SSEX AS sex,
+        td.DEPT_NAME AS deptName
+        FROM
+        team_info ti
+        LEFT JOIN t_user tu ON ( ti.admin_user = tu.USER_ID )
+        LEFT JOIN t_dept td ON ( tu.DEPT_ID = td.DEPT_ID )
+        WHERE 1 = 1
+        <include refid="baseParam"/>
+    </select>
+
+    <select id="teamUnbound" resultType="java.util.LinkedHashMap">
+        SELECT
+        tu.USER_ID AS userId,
+        tu.USERNAME AS username
+        FROM
+        t_user tu
+        WHERE
+        tu.USER_ID NOT IN (
+        SELECT
+        admin_user
+        FROM
+        team_info )
+        AND tu.STATUS = 1
+    </select>
+
+    <select id="teamList" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        tu.USERNAME AS username,
+        tu.SSEX AS sex,
+        td.DEPT_NAME AS deptName
+        FROM
+        team_info ti
+        LEFT JOIN t_user tu ON ( ti.admin_user = tu.USER_ID )
+        LEFT JOIN t_dept td ON ( tu.DEPT_ID = td.DEPT_ID )
+        WHERE 1 = 1
+        <if test="account != null and account != ''">
+            AND ti.players LIKE CONCAT('%',#{account},'%')
+        </if>
+    </select>
+
+    <select id="getTeamUserInfo" resultType="java.util.LinkedHashMap">
+        SELECT
+        ti.players,
+        ti.avatar,
+        ti.remarks,
+        tu.EMAIL,
+        tu.MOBILE
+        FROM
+        team_info ti
+        LEFT JOIN t_user tu ON ( ti.admin_user = tu.USER_ID )
+        WHERE 1 = 1
+        <if test="ids != null">
+            AND ti.admin_user IN
+            <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+                #{ id }
+            </foreach>
+        </if>
+    </select>
+
+    <select id="administrator" resultType="java.util.LinkedHashMap">
+        SELECT
+        tu.USER_ID AS adminUser,
+        tu.EMAIL AS email,
+        tu.MOBILE AS mobile,
+        ti.players,
+        ti.id AS userId
+        FROM
+        t_user tu
+        LEFT JOIN t_user_role tur ON ( tur.USER_ID = tu.USER_ID )
+        LEFT JOIN team_info ti ON ( ti.admin_user = tu.USER_ID )
+        WHERE
+        tur.ROLE_ID = #{ roleId }
+    </select>
+</mapper>

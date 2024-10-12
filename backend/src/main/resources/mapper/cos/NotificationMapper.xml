@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.NotificationMapper">
+
+    <sql id="baseResult">
+        n.id,
+        n.`to_user` AS toUser,
+        n.`title`,
+        n.`content`,
+        n.`date`,
+        n.`type`,
+        n.`del_flag` AS delFlag
+    </sql>
+
+    <select id="page" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        tu.USERNAME AS username
+        FROM
+        notification n
+        LEFT JOIN t_user tu ON (tu.USER_ID = n.to_user)
+        WHERE 1 = 1
+        <if test="notification.type != null and notification.type != ''">
+            AND n.`type` = #{ notification.type }
+        </if>
+        <if test="notification.title != null and notification.title != ''">
+            AND n.`title` LIKE CONCAT('%',#{notification.title},'%')
+        </if>
+        <if test="notification.toUser != null and notification.toUser != ''">
+            AND n.`to_user` = #{ notification.toUser }
+        </if>
+    </select>
+
+</mapper>

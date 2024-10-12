@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.ThesisInfoMapper">
+
+    <sql id="baseResult">
+        ti.code,
+        ti.thesis_name AS thesisName,
+        ti.word_count AS wordCount,
+        ti.duplicate,
+        ti.price,
+        ti.cycle
+    </sql>
+
+    <!-- 论文定制分页查询 -->
+    <select id="selectThesisInfoPage" resultType="com.fate.archer.cos.entity.ThesisInfo">
+        SELECT <include refid="baseResult"/>,
+               team.avatar,
+               team.players
+        FROM thesis_info ti
+                 LEFT JOIN team_info team on (ti.technician = team.id)
+        WHERE 1 = 1
+    </select>
+</mapper>

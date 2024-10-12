@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.DeployProcessMapper">
+    <sql id="baseResult">
+        dp.id,
+        dp.status,
+        dp.operate_pic AS operatePic,
+        dp.operate_time AS operateTime,
+        dp.current_status AS currentStatus
+    </sql>
+
+    <!-- 根据订单编号查询流程 -->
+    <select id="deployProcessByOrder" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>
+        FROM
+        deploy_process dp
+        WHERE
+        dp.order_code = #{orderCode}
+    </select>
+</mapper>

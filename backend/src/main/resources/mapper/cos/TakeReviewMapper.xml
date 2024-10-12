@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.TakeReviewMapper">
+
+    <sql id="baseResult">
+        tr.id,
+        tr.user_code AS userCode,
+        tr.trade_type AS tradeType,
+        tr.review,
+        tr.remarks,
+        tr.balance,
+        tr.receiving,
+        tr.trade_result AS tradeResult,
+        tr.date,
+        tr.finish_date AS finishDate
+    </sql>
+
+    <sql id="baseParam">
+        <if test="takeReview.account != null and takeReview.account != ''">
+            AND ui.account LIKE CONCAT('%',#{takeReview.account},'%')
+        </if>
+        <if test="takeReview.tradeType != null and takeReview.tradeType != -1">
+            AND tr.trade_type = #{takeReview.tradeType}
+        </if>
+    </sql>
+
+    <select id="takeReviewPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        ui.account,
+        ui.email,
+        ui.phone
+        FROM
+        take_review tr
+        LEFT JOIN user_info ui ON (tr.user_code = ui.`code`)
+        WHERE 1 = 1
+        <include refid="baseParam"/>
+        ORDER BY tr.date DESC
+    </select>
+</mapper>

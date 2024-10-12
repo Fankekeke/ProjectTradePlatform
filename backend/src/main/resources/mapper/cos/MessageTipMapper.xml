@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.MessageTipMapper">
+
+    <sql id="baseResult">
+        mt.id,
+        mt.send_date AS sendDate,
+        mt.send_type AS sendType,
+        mt.send_user AS sendUser,
+        mt.message_type AS messageType,
+        mt.status
+    </sql>
+
+    <sql id="baseParam">
+        <if test="messageTip.sendType != null and messageTip.sendType != '-1'">
+            AND mt.send_type = #{messageTip.sendType}
+        </if>
+        <if test="messageTip.messageType != null and messageTip.messageType != '-1'">
+            AND mt.message_type = #{messageTip.messageType}
+        </if>
+        <if test="messageTip.startDate != null and messageTip.endDate != null">
+            AND mt.send_date between #{messageTip.startDate} AND #{messageTip.endDate}
+        </if>
+    </sql>
+
+    <select id="getMessageByPage" resultType="java.util.LinkedHashMap" parameterType="com.fate.archer.cos.entity.MessageTip">
+        SELECT
+        <include refid="baseResult"/>,
+        ui.`account` AS user
+        FROM
+        message_tip mt
+        LEFT JOIN user_info ui ON ( mt.send_user = ui.id )
+        WHERE 1 = 1
+        <include refid="baseParam"/>
+        ORDER BY mt.send_date DESC
+    </select>
+</mapper>

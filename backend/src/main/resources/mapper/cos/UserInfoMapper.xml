@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.UserInfoMapper">
+    <sql id="baseResult">
+        ui.`id` AS id,
+        ui.`code` AS code,
+        ui.`account` AS account,
+        ui.`email` AS email,
+        ui.`phone` AS phone,
+        ui.`status` AS status,
+        ui.`sex` AS sex,
+        ui.`invite` AS invite,
+        ui.`balance` AS balance,
+        ui.`create_date` AS createDate,
+        ui.`invite_user` AS inviteUser
+    </sql>
+
+    <sql id="baseParam">
+        <if test="userInfo.account != null and userInfo.account != ''">
+            AND ui.`account` LIKE CONCAT('%',#{userInfo.account},'%')
+        </if>
+        <if test="userInfo.email != null and userInfo.email != ''">
+            AND ui.`email` LIKE CONCAT('%',#{userInfo.email},'%')
+        </if>
+        <if test="userInfo.phone != null and userInfo.phone != ''">
+            AND ui.`phone` LIKE CONCAT('%',#{userInfo.phone},'%')
+        </if>
+        <if test="userInfo.status != null">
+            AND ui.`status` = #{userInfo.status}
+        </if>
+        <if test="userInfo.sex != null">
+            AND ui.`sex` = #{userInfo.sex}
+        </if>
+        <if test="userInfo.invite != null">
+            AND ui.`phone` = #{userInfo.invite}
+        </if>
+    </sql>
+
+    <select id="getUserPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        ss.`name` AS schoolName,
+        sc.`name` AS cityName,
+        ui1.account AS inviteUserName
+        FROM
+        user_info ui
+        LEFT JOIN sys_school ss ON (ui.school = ss.id)
+        LEFT JOIN sys_city sc ON (sc.id = ss.city_id)
+        LEFT JOIN user_info ui1 ON (ui1.`code` = ui.invite_user)
+        WHERE 1 = 1
+        <include refid="baseParam"/>
+    </select>
+
+    <select id="trade" resultType="java.util.LinkedHashMap">
+        SELECT
+        oi.order_price AS orderPrice,
+        oi.order_time AS orderTime,
+        oi.payment_type AS paymentType,
+        oi.need_deploy AS needDeploy,
+        pi.pro_name AS proName
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON pi.`code` = oi.pro_code
+        WHERE
+        oi.order_status = 1
+        AND oi.user_code = #{userCode}
+    </select>
+
+    <select id="balance" resultType="java.util.LinkedHashMap">
+        SELECT
+        oi.order_price AS orderPrice,
+        oi.order_time AS orderTime,
+        oi.payment_type AS paymentType,
+        pi.pro_name AS proName,
+        oi.need_deploy AS needDeploy,
+        ui.account,
+        ui.head_img_url AS headImgUrl
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON ( pi.`code` = oi.pro_code )
+        LEFT JOIN user_info ui ON ( ui.`code` = oi.user_code )
+        WHERE
+        oi.order_status = 1
+        AND oi.user_code IN (
+        SELECT
+        ui.`code`
+        FROM
+        user_info ui
+        WHERE
+        ui.invite_user = #{userCode})
+    </select>
+
+    <select id="invite" resultType="java.util.LinkedHashMap">
+        SELECT
+        ui.`code`,
+        ui.account,
+        ui.create_date AS createDate,
+        ui.sex
+        FROM
+        user_info ui
+        WHERE
+        ui.invite_user = #{userCode}
+    </select>
+
+    <select id="getUserInfoByCode" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        ss.`id` AS schoolId,
+        ss.`name` AS schoolName,
+        sc.`name` AS cityName
+        FROM
+        user_info ui
+        LEFT JOIN sys_school ss ON (ui.school = ss.id)
+        LEFT JOIN sys_city sc ON (sc.id = ss.city_id)
+        WHERE 1 = 1
+        AND ui.`code` = #{ userCode }
+    </select>
+</mapper>

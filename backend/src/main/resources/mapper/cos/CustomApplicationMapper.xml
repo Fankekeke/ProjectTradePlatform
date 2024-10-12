@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.CustomApplicationMapper">
+
+    <sql id="baseResult">
+        ca.`id`,
+        ca.`code`,
+        ca.`user_code` AS userCode,
+        ca.`pro_name` AS proName,
+        ca.`skills`,
+        ca.`module`,
+        ca.`contact`,
+        ca.`customize_code` AS customizeCode,
+        ca.`create_date` AS createDate
+    </sql>
+
+    <select id="customApplicationPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        ui.account
+        FROM
+        custom_application ca
+        LEFT JOIN user_info ui ON (ui.`code` = ca.user_code)
+        WHERE 1 = 1
+        <if test="customApplication.proName != null and customApplication.proName != ''">
+            AND ca.`pro_name` LIKE CONCAT('%',#{customApplication.proName},'%')
+        </if>
+        ORDER BY ui.create_date DESC
+    </select>
+
+</mapper>

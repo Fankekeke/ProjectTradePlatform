@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.CustomizeInfoMapper">
+
+    <sql id="baseResult">
+        ci.`id`,
+        ci.`code`,
+        ci.`pro_name` AS proName,
+        ci.`skills`,
+        ci.`module`,
+        ci.`user_code` AS userCode,
+        ci.`deposit`,
+        ci.`amount`,
+        ci.`status`,
+        ci.`technician`,
+        ci.`remarks`,
+        ci.`contact`,
+        ci.`cycle`,
+        ci.`start_date` AS startDate,
+        ci.`thesis_code` AS thesisCode,
+        ci.`create_date` AS createDate
+    </sql>
+
+    <sql id="thesisResult">
+        ti.`thesis_name` AS thesisName,
+        ti.`word_count` AS wordCount,
+        ti.`duplicate`,
+        ti.`price`,
+        ti.`cycle` AS thesisCycle
+    </sql>
+
+    <sql id="processResult">
+        cpp.`front_money` AS frontMoney,
+        cpp.`front_status` AS frontStatus,
+        cpp.`front_date` AS frontDate,
+        cpp.`front_type` AS frontType,
+        cpp.`final_money` AS finalMoney,
+        cpp.`final_status` AS finalStatus,
+        cpp.`final_date` AS finalDate,
+        cpp.`final_type` AS finalType
+    </sql>
+
+    <sql id="baseParam">
+        <if test="customizeInfo.proName != null and customizeInfo.proName != ''">
+            AND ci.`pro_name` LIKE CONCAT('%',#{ customizeInfo.proName },'%')
+        </if>
+        <if test="customizeInfo.status != null and customizeInfo.status != -1">
+            AND ci.`status` = #{ customizeInfo.status }
+        </if>
+        <if test="customizeInfo.code != null and customizeInfo.code != ''">
+            AND ci.`code` LIKE CONCAT('%',#{ customizeInfo.code },'%')
+        </if>
+        <if test="customizeInfo.userCode != null and customizeInfo.userCode != ''">
+            AND ci.`userCode` = #{ customizeInfo.userCode }
+        </if>
+    </sql>
+
+    <!-- 分页查询定制信息 -->
+    <select id="customizeInfoPage" resultType="java.util.LinkedHashMap" parameterType="com.fate.archer.cos.entity.CustomizeInfo">
+        SELECT
+        <include refid="baseResult"/>,
+        <include refid="thesisResult"/>,
+        <include refid="processResult"/>,
+        ui.account,
+        team.players,
+        team.avatar
+        FROM
+        customize_info ci
+        LEFT JOIN user_info ui ON ( ui.`code` = ci.user_code )
+        LEFT JOIN thesis_info ti ON (ti.`code` = ci.thesis_code)
+        LEFT JOIN team_info team ON (ti.technician = team.id)
+        LEFT JOIN customize_payment_process cpp ON (cpp.custom_code = ci.`code`)
+        WHERE 1 = 1
+        <include refid="baseParam"/>
+        ORDER BY ci.`create_date` DESC
+    </select>
+
+    <!-- 根据技术人员获取定制信息 -->
+    <select id="customizeInfoBuild" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        cl.pic,
+        cl.`local`,
+        cl.remarks AS completeRemarks,
+        cl.complete_date AS completeDate,
+        cl.proposer,
+        cl.deploy_pic AS deployPic,
+        cl.deploy_date AS deployDate,
+        cl.deploy_user AS deployUser,
+        ti.players AS uploadPlayers,
+        ti2.players AS deployPlayers
+        FROM
+        customize_info ci
+        LEFT JOIN customize_ledger cl ON (cl.customize_code = ci.`code`)
+        LEFT JOIN team_info ti ON (ti.id = cl.proposer)
+        LEFT JOIN team_info ti2 ON (ti2.id = cl.deploy_user)
+        WHERE
+        FIND_IN_SET(#{ technician }, ci.technician)
+        <if test="status != null">
+            AND ci.`status` = #{ status }
+        </if>
+    </select>
+</mapper>

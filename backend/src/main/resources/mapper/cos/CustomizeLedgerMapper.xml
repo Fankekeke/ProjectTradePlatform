@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.CustomizeLedgerMapper">
+
+    <!-- 根据定制编号获取定制台账 -->
+    <select id="customLedger" resultType="java.util.LinkedHashMap">
+        SELECT
+        cl.pic,
+        cl.`local`,
+        cl.remarks AS completeRemarks,
+        cl.complete_date AS completeDate,
+        cl.proposer,
+        cl.deploy_pic AS deployPic,
+        cl.deploy_date AS deployDate,
+        cl.deploy_user AS deployUser,
+        ti.players AS uploadPlayers,
+        ti2.players AS deployPlayers
+        FROM
+        customize_ledger cl
+        LEFT JOIN team_info ti ON ( ti.id = cl.proposer )
+        LEFT JOIN team_info ti2 ON ( ti2.id = cl.deploy_user )
+        WHERE
+        cl.customize_code = #{ code }
+    </select>
+</mapper>

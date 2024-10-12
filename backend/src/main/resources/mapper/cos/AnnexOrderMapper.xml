@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.AnnexOrderMapper">
+
+    <sql id="baseResult">
+        ao.`id`,
+        ao.`code`,
+        ao.`annex_code` AS annexCode,
+        ao.`user_code` AS userCode,
+        ao.`price`,
+        ao.`payment_type` AS paymentType,
+        ao.`order_time` AS orderTime
+    </sql>
+
+    <sql id="annexResult">
+        ai.`annex_name` AS annexName,
+        ai.`annex_local` AS annexLocal,
+        ai.`annex_type` AS annexType,
+        ai.`annex_anther` AS annexAnther,
+        ai.`annex_price` AS annexPrice,
+        ai.`is_enable` AS isEnable,
+        ai.`upload_date` AS uploadDate,
+        ai.`status`,
+        ai.`pic`,
+        ai.`word_count` AS wordCount,
+        ai.`remark`
+    </sql>
+
+    <sql id="baseParam">
+        <if test="annexOrder.annexName != null and annexOrder.annexName != ''">
+            AND ai.`annex_name` LIKE CONCAT('%',#{annexOrder.annexName},'%')
+        </if>
+        <if test="annexOrder.annexType != null and annexOrder.annexType != ''">
+            AND ai.`annex_type` = #{annexOrder.annexType}
+        </if>
+        <if test="annexOrder.paymentType != null and annexOrder.paymentType != ''">
+            AND ao.`payment_type` = #{annexOrder.paymentType}
+        </if>
+        <if test="annexOrder.account != null and annexOrder.account != ''">
+            AND ui.`account` LIKE CONCAT('%',#{annexOrder.account},'%')
+        </if>
+    </sql>
+
+    <!-- 分页查询附件订单信息 -->
+    <select id="annexOrderPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        <include refid="annexResult"/>,
+        ui.account,
+        team.players,
+        team.avatar
+        FROM
+        annex_order ao
+        LEFT JOIN annex_info ai ON ( ai.`code` = ao.`annex_code` )
+        LEFT JOIN user_info ui ON ( ui.`code` = ao.`user_code` )
+        LEFT JOIN team_info team ON ( team.id = ai.annex_anther )
+        WHERE
+        1 = 1
+        <include refid="baseParam"/>
+    </select>
+
+    <!-- 根据开发者ID获取附件订单 -->
+    <select id="thesisOrderList" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        ai.annex_name AS annexName
+        FROM
+        annex_order ao
+        LEFT JOIN annex_info ai ON ( ai.`code` = ao.annex_code )
+        WHERE
+        ai.annex_anther = #{ teamId }
+    </select>
+
+    <!-- 根据订单编号获取详细信息 -->
+    <select id="annexOrderInfoByCode" resultType="java.util.LinkedHashMap">
+        SELECT
+        ao.price,
+        CASE
+        ao.`payment_type`
+        WHEN 1 THEN
+        '支付宝'
+        WHEN 2 THEN
+        '微信'
+        WHEN 3 THEN
+        '平台下单'
+        END AS paymentType,
+        DATE_FORMAT( ao.`order_time`, '%Y-%m-%d %H:%i:%s' ) AS orderTime,
+        ti.players,
+        ti.avatar,
+        ai.`code` AS annexCode,
+        ai.annex_name AS annexName,
+        ai.annex_local AS annexLocal,
+        CASE
+        ai.`annex_type`
+        WHEN 1 THEN
+        '论文'
+        WHEN 2 THEN
+        'PPT'
+        WHEN 3 THEN
+        '任务书'
+        WHEN 4 THEN
+        '开题报告'
+        END AS annexType,
+        ai.word_count AS wordCount,
+        ai.remark
+        FROM
+        annex_info ai
+        LEFT JOIN annex_order ao ON ( ao.annex_code = ai.`code` )
+        LEFT JOIN team_info ti ON ( ti.id = ai.annex_anther )
+        WHERE
+        ao.`code` = #{code}
+    </select>
+
+</mapper>

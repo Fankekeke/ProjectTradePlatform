@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.ProjectApplyMapper">
+
+    <sql id="baseResult">
+        py.`id`,
+        py.`pro_name` AS proName,
+        py.`pro_introduce` AS proIntroduce,
+        py.`pro_pic` AS proPic,
+        py.`pro_technology` AS proTechnology,
+        py.`pro_voide` AS proVoide,
+        py.`pro_dowbload_zip` AS proDowbloadZip,
+        py.`pro_type` AS proType,
+        py.`pro_sort` AS proSort,
+        py.`pro_status` AS proStatus,
+        py.`release_time` AS releaseTime,
+        py.`author`
+    </sql>
+
+    <!-- 分页查询我的项目 -->
+    <select id="projectApplyPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="baseResult"/>,
+        tu.USERNAME AS username
+        FROM
+        project_apply py
+        LEFT JOIN t_user tu ON (py.author = tu.USER_ID)
+        WHERE 1 = 1
+        <if test="projectApply.author != null and projectApply.author != ''">
+            AND py.`author` = #{ projectApply.author }
+        </if>
+        <if test="projectApply.proStatus != null and projectApply.proStatus != ''">
+            AND py.`pro_status` = #{ projectApply.proStatus }
+        </if>
+        <if test="projectApply.proType != null and projectApply.proType != ''">
+            AND py.`pro_type` = #{ projectApply.proType }
+        </if>
+        <if test="projectApply.proName != null and projectApply.proName != ''">
+            AND py.`pro_name` LIKE CONCAT('%',#{projectApply.proName},'%')
+        </if>
+        ORDER BY py.release_time DESC
+    </select>
+
+</mapper>

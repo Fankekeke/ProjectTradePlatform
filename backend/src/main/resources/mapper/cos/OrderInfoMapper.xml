@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.OrderInfoMapper">
+    <resultMap id="BaseResultMap" type="com.fate.archer.cos.entity.OrderInfo">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="pro_code" property="proCode"/>
+        <result column="order_price" property="orderPrice"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="payment_type" property="paymentType"/>
+        <result column="exchange_code" property="exchangeCode"/>
+        <result column="exchange_url" property="exchangeUrl"/>
+        <result column="effective_time" property="effectiveTime"/>
+        <result column="user_code" property="userCode"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="pro_name" property="proName"/>
+        <result column="need_deploy" property="needDeploy"/>
+    </resultMap>
+
+    <sql id="customResult">
+        ci.`id`,
+        ci.`code`,
+        ci.`pro_name` AS proName,
+        ci.`skills`,
+        ci.`module`,
+        ci.`user_code` AS userCode,
+        ci.`deposit`,
+        ci.`amount`,
+        ci.`status`,
+        ci.`technician`,
+        ci.`remarks`,
+        ci.`contact`,
+        ci.`cycle`,
+        ci.`start_date` AS startDate,
+        ci.`thesis_code` AS thesisCode,
+        ci.`create_date` AS createDate
+    </sql>
+
+    <!-- 分页查询订单信息 -->
+    <select id="getOrderInfoByPage" resultType="com.fate.archer.cos.entity.OrderInfo" parameterType="com.fate.archer.cos.entity.OrderInfo">
+        SELECT
+        oi.*,
+        pi.pro_name,
+        ui.account,
+        now() > oi.effective_time AS is_expired,
+        dp.`status` AS deployStatus
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON pi.`code` = oi.pro_code
+        LEFT JOIN user_info ui ON (ui.`code` = oi.user_code)
+        LEFT JOIN deploy_process dp ON (dp.order_code = oi.`code`) AND dp.current_status = 1
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="orderInfo.proCode != null and orderInfo.proCode != '-1'">
+                AND oi.pro_code = #{orderInfo.proCode}
+            </if>
+            <if test="orderInfo.orderStatus != null and orderInfo.orderStatus != '-2'">
+                AND oi.order_status = #{orderInfo.orderStatus}
+            </if>
+            <if test="orderInfo.isExpired != null and orderInfo.isExpired != '-1'">
+                AND now() > oi.effective_time = #{orderInfo.isExpired}
+            </if>
+            <if test="orderInfo.paymentType != null and orderInfo.paymentType != '-1'">
+                AND oi.payment_type = #{orderInfo.paymentType}
+            </if>
+            <if test="orderInfo.code != null">
+                AND oi.`code` LIKE CONCAT('%',#{orderInfo.code},'%')
+            </if>
+        </trim>
+        ORDER BY oi.`order_time` DESC
+    </select>
+
+    <!-- 使用兑换码兑换 -->
+    <select id="getProjectFileByExchangeCode" resultType="com.fate.archer.cos.entity.OrderInfo">
+        SELECT
+        oi.*,
+        pi.pro_name,
+        now() > oi.effective_time AS is_expired
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON pi.`code` = oi.pro_code
+        WHERE oi.exchange_code = #{code}
+    </select>
+
+    <!-- 项目详情 -->
+    <select id="orderInfoDetailed" resultType="java.util.LinkedHashMap">
+        SELECT
+        oi.*,
+        pi.pro_name,
+        ui.account,
+        invite.account AS inviteUser,
+        team.players,
+        team.avatar,
+        now() > oi.effective_time AS is_expired
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON pi.`code` = oi.pro_code
+        LEFT JOIN user_info ui ON (ui.`code` = oi.user_code)
+        LEFT JOIN user_info invite ON (ui.`invite_user` = invite.`code`)
+        LEFT JOIN team_info team ON (team.id = pi.author)
+        WHERE oi.`code` = #{ code }
+    </select>
+
+    <!-- 用户历史订单 -->
+    <select id="orderHistoryByUserCodePage" resultType="com.fate.archer.cos.entity.OrderInfo">
+        SELECT
+        oi.*,
+        pi.pro_name,
+        ui.account,
+        now() > oi.effective_time AS is_expired
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON pi.`code` = oi.pro_code
+        LEFT JOIN user_info ui ON (ui.`code` = oi.user_code)
+        ORDER BY oi.`order_time` DESC
+        WHERE oi.user_code = #{ userCode }
+    </select>
+
+    <!-- 系统主页订单统计 -->
+    <select id="orderStatistics" resultType="java.util.LinkedHashMap">
+        SELECT
+        COUNT( 1 ) AS buyNum,
+        COUNT( IF(oi.need_deploy = 1 , oi.need_deploy, null)) AS needDeploy,
+        <if test="type != null and type = 1">
+            pi.pro_name AS proName,
+        </if>
+        <if test="type != null and type = 2">
+            ti.players,
+        </if>
+        SUM( oi.order_price) AS orderPrice
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON ( oi.pro_code = pi.`code` )
+        LEFT JOIN team_info ti ON (ti.admin_user = pi.author)
+        WHERE
+        oi.order_time BETWEEN #{ startDate } AND #{ endDate }
+        AND oi.order_status = 1
+        GROUP BY
+        <if test="type != null and type = 1">
+            oi.pro_code
+        </if>
+        <if test="type != null and type = 2">
+            ti.admin_user
+        </if>
+    </select>
+
+    <!-- 近期非定制收益统计 -->
+    <select id="nonCustomizedRevenue" resultType="java.util.LinkedHashMap">
+        SELECT
+        spo.days,
+        COUNT( oi.`code`) AS count,
+        COUNT( IF(oi.need_deploy = 1 , oi.need_deploy, null)) AS deploy,
+	    IFNULL(SUM(oi.order_price),0) AS orderPrice
+        FROM
+        (SELECT
+        DATE_SUB( curdate(), INTERVAL + 0 DAY ) days UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 1 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 2 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 3 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 4 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 5 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 6 DAY )) spo
+        LEFT JOIN order_info oi ON (DATE_FORMAT( oi.order_time, '%Y-%m-%d' ) = DATE_FORMAT( spo.days, '%Y-%m-%d' ))
+        GROUP BY
+        days
+    </select>
+
+    <!-- 月统计平台非定制收益 -->
+    <select id="incomeMonth" resultType="java.math.BigDecimal">
+        SELECT
+        (IFNULL( orderPrice, 0 ) + IFNULL( deployPrice, 0 )) AS price
+        FROM
+        (
+        SELECT SUM( oi.order_price ) AS orderPrice FROM order_info oi
+        LEFT JOIN project_info pi ON (pi.`code` =  oi.pro_code)
+        WHERE DATE_FORMAT( oi.order_time, '%Y-%m' ) = DATE_FORMAT( #{date}, '%Y-%m' ) AND oi.order_status = 1
+        <if test="teamUser != null">
+            AND pi.author = #{ teamUser }
+        </if>
+        ) tb1,
+        (
+        SELECT
+        ( COUNT( IF ( oi.need_deploy = 1, oi.need_deploy, NULL )) * 30 ) AS deployPrice
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON (pi.`code` =  oi.pro_code)
+        WHERE
+        DATE_FORMAT( oi.order_time, '%Y-%m' ) = DATE_FORMAT( #{date}, '%Y-%m' )
+        AND oi.order_status = 1
+        <if test="teamUser != null">
+            AND pi.author = #{ teamUser }
+        </if>
+        ) tb2
+    </select>
+
+    <!-- 月统计平台定制收益 -->
+    <select id="customIncomeMonth" resultType="java.math.BigDecimal">
+        SELECT
+        (
+        IFNULL( tb1.price, 0 ) + IFNULL( tb2.price, 0 )) AS price
+        FROM
+        (
+        SELECT
+        IFNULL( SUM( cpp.front_money ), 0 ) price
+        FROM
+        customize_payment_process cpp
+        WHERE
+        cpp.front_status = 1
+        AND DATE_FORMAT( front_date, '%Y-%m' ) = DATE_FORMAT( #{date}, '%Y-%m' )) tb1,
+        (
+        SELECT
+        IFNULL( SUM( cpp.final_money ), 0 ) price
+        FROM
+        customize_payment_process cpp
+        WHERE
+        cpp.final_status = 1
+        AND DATE_FORMAT( final_date, '%Y-%m' ) = DATE_FORMAT( #{date}, '%Y-%m' )) tb2
+        </select>
+
+    <!-- 统计平台总（非定制收益，非定制交易量，定制收益，定制交易量） -->
+    <select id="moreAll" resultType="java.util.LinkedHashMap">
+        SELECT
+        col1.price AS nonPrice,
+        col1.orderNum AS nonNum,
+        col2.price AS price,
+        col2.orderNum AS num
+        FROM
+        (
+        SELECT
+        (
+        IFNULL( SUM( oi.order_price ), 0 ) + IFNULL(( COUNT( IF ( oi.need_deploy = 1, oi.need_deploy, NULL )) * 30 ), 0 )) AS price,
+        IFNULL( COUNT( oi.`code` ), 0 ) AS orderNum
+        FROM
+        order_info oi
+        WHERE
+        oi.order_status = 1
+        ) col1,
+        (
+        SELECT
+        ( tb1.price + tb2.price ) price,
+        tb0.orderNum
+        FROM
+        ( SELECT IFNULL( COUNT( 1 ), 0 ) orderNum FROM customize_info ) tb0,
+        ( SELECT IFNULL( SUM( cpp.front_money ), 0 ) price FROM customize_payment_process cpp WHERE cpp.front_status = 1 ) tb1,
+        ( SELECT IFNULL( SUM( cpp.final_money ), 0 ) price FROM customize_payment_process cpp WHERE cpp.final_status = 1 ) tb2
+        ) col2
+    </select>
+
+    <!-- 交易量（日环比，月环比） -->
+    <select id="orderNumRate" resultType="java.util.LinkedHashMap">
+        SELECT
+        tb1.num AS todayNum,
+        tb2.num AS yesterdayNum,
+        tb3.num AS currentMonthNum,
+        tb4.num AS lastMonthNum
+        FROM
+        (
+        SELECT
+            COUNT( 1 ) AS num
+        FROM
+            order_info
+        WHERE
+            order_status = 1
+        AND DATE_FORMAT( order_time, '%Y-%m-%d' ) = CURDATE()) tb1,
+        (
+        SELECT
+            COUNT( 1 ) AS num
+        FROM
+            order_info
+        WHERE
+            order_status = 1
+        AND DATE_FORMAT( order_time, '%Y-%m-%d' ) = DATE_FORMAT( DATE_SUB( CURDATE(), INTERVAL 1 DAY ), '%Y-%m-%d' )) AS tb2,
+        (
+        SELECT
+            COUNT( 1 ) AS num
+        FROM
+            order_info
+        WHERE
+            order_status = 1
+        AND DATE_FORMAT( order_time, '%Y-%m' ) = DATE_FORMAT( CURDATE(), '%Y-%m-%d' )) AS tb3,
+        (
+        SELECT
+            COUNT( 1 ) AS num
+        FROM
+            order_info
+        WHERE
+        order_status = 1
+            AND DATE_FORMAT( order_time, '%Y-%m' ) = DATE_FORMAT( DATE_SUB( CURDATE(), INTERVAL 2 MONTH ), '%Y-%m' )) AS tb4
+    </select>
+
+    <!-- 月统计平台支出 -->
+    <select id="expensesMonth" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(balance),0) FROM take_review WHERE DATE_FORMAT( finish_date, '%Y-%m' ) = DATE_FORMAT( #{date}, '%Y-%m' )
+    </select>
+
+    <!-- 进行中的定制项目 -->
+    <select id="progressTask" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="customResult"/>
+        FROM
+        customize_info ci
+        WHERE
+        1 = 1
+        AND ci.`status` IN (2,3,4)
+        <if test="teamUser != null">
+            AND FIND_IN_SET(#{ teamUser }, ci.`technician`)
+        </if>
+        LIMIT 10
+    </select>
+
+    <!-- 进行中的非定制部署项目 -->
+    <select id="nonProgressTask" resultType="java.util.LinkedHashMap">
+        SELECT
+        oi.*,
+        pi.pro_name AS proName,
+        pi.author_name AS authorName
+        FROM
+        order_info oi
+        LEFT JOIN deploy_process dp ON ( dp.order_code = oi.`code` )
+        LEFT JOIN project_info pi ON (pi.`code` = oi.pro_code)
+        WHERE
+        dp.current_status = 1
+        AND dp.`status` != 3
+        <if test="teamUser != null">
+            AND pi.author = #{ teamUser }
+        </if>
+        LIMIT 10
+    </select>
+
+    <!-- 根据开发者ID获取年统计 -->
+    <select id="teamUserStatisticsYear" resultType="java.util.LinkedHashMap">
+
+    </select>
+
+    <!-- 根据开发者ID获取订单信息 -->
+    <select id="orderListByDevelopers" resultType="java.util.LinkedHashMap">
+        SELECT
+        oi.*,
+        pi.pro_name AS proName,
+        wa.developer_balance AS developerBalance,
+	    wa.create_date AS createDate,
+	    dp.`status`,
+        dp.`operate_pic` AS operatePic,
+        dp.`operate_time` AS operateTime
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON ( pi.`code` = oi.pro_code )
+        LEFT JOIN wealth_assign wa ON (wa.order_code = oi.`code`)
+        LEFT JOIN deploy_process dp ON (dp.order_code = oi.`code`) AND dp.current_status = 1
+        WHERE
+        pi.author = #{ teamId }
+    </select>
+
+    <!-- 根据用户编号分页获取订单信息 -->
+    <select id="orderListByUser" resultType="java.util.LinkedHashMap">
+        SELECT
+        oi.`code`,
+        oi.`order_price` AS orderPrice,
+        oi.`need_deploy` AS needDeploy,
+        DATE_FORMAT( oi.`order_time`, '%Y-%m-%d %H:%i:%s' ) AS orderTime,
+        CASE
+		oi.`payment_type`
+		WHEN 1 THEN
+		'支付宝'
+		WHEN 2 THEN
+		'微信'
+		WHEN 3 THEN
+		'平台下单'
+		END AS paymentType,
+		CASE
+		oi.`order_status`
+		WHEN - 1 THEN
+		'已取消'
+		WHEN 0 THEN
+		'待支付'
+		WHEN 1 THEN
+		'已支付'
+		END AS orderStatus,
+        ui.`account`,
+        pi.pro_name AS proName
+        FROM
+        order_info oi
+        LEFT JOIN user_info ui ON ( ui.`code` = oi.user_code )
+        LEFT JOIN project_info pi ON ( pi.`code` = oi.pro_code )
+        WHERE
+        oi.user_code = #{ userCode }
+        UNION
+        SELECT
+        ao.`code`,
+        ao.`price` AS orderPrice,
+        0 AS needDeploy,
+        ao.`order_time` AS orderTime,
+        CASE
+        ao.`payment_type`
+        WHEN 1 THEN
+        '支付宝'
+        WHEN 2 THEN
+        '微信'
+        WHEN 3 THEN
+        '平台下单'
+        END AS paymentType,
+        '已支付' AS orderStatus,
+        ui.account,
+        ai.annex_name AS proName
+        FROM
+        annex_order ao
+        LEFT JOIN annex_info ai ON ( ai.`code` = ao.annex_code )
+        LEFT JOIN user_info ui ON ( ui.`code` = ao.user_code )
+        WHERE
+        ao.user_code = #{ userCode }
+    </select>
+
+    <!-- 根据订单编号获取详细信息 -->
+    <select id="orderInfoByCode" resultType="java.util.LinkedHashMap">
+        SELECT
+        oi.`code`,
+        oi.`order_price` AS orderPrice,
+        DATE_FORMAT( oi.`order_time`, '%Y-%m-%d %H:%i:%s' ) AS orderTime,
+        oi.`need_deploy` AS needDeploy,
+        CASE
+        oi.`payment_type`
+        WHEN 1 THEN
+        '支付宝'
+        WHEN 2 THEN
+        '微信'
+        WHEN 3 THEN
+        '平台下单'
+        END AS paymentType,
+        CASE
+        oi.`order_status`
+        WHEN - 1 THEN
+        '已取消'
+        WHEN 0 THEN
+        '待支付'
+        WHEN 1 THEN
+        '已支付'
+        END AS orderStatus,
+        pi.pro_name AS proName,
+        pi.`pro_dowbload_zip` AS proCode,
+        ui.account,
+        ui.head_img_url AS headImgUrl,
+        ti.players,
+        ti.avatar,
+        tu.MOBILE AS mobile
+        FROM
+        order_info oi
+        LEFT JOIN project_info pi ON ( pi.`code` = oi.pro_code )
+        LEFT JOIN user_info ui ON ( ui.`code` = oi.user_code )
+        LEFT JOIN team_info ti ON ( ti.id = pi.author )
+        LEFT JOIN t_user tu ON ( tu.USER_ID = ti.admin_user )
+        WHERE
+        oi.`code` = #{ orderCode }
+    </select>
+
+    <!-- 根据订单编号获取部署流程 -->
+    <select id="orderDeployProcess" resultType="java.util.LinkedHashMap">
+        SELECT
+        `status`,
+        DATE_FORMAT( `operate_time`, '%Y-%m-%d %H:%i:%s' ) AS operateTime,
+        current_status AS currentStatus
+        FROM
+        deploy_process
+        WHERE
+        order_code = #{ orderCode }
+    </select>
+
+</mapper>

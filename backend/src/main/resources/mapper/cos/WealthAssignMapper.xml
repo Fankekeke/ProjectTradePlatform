@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.WealthAssignMapper">
+
+    <sql id="wealthResult">
+        wa.`order_code` AS orderCode,
+        wa.`developer_a` AS developerA,
+        wa.`developer_b` AS developerB,
+        wa.`developer_c` AS developerC,
+        wa.`developer_balance` AS developerBalance,
+        wa.`platform_balance` AS platformBalance,
+        wa.`invite_code` AS inviteCode,
+        wa.`invite_balance` AS inviteBalance,
+        wa.`wealth` AS wealth,
+        wa.`create_date` AS createDate
+    </sql>
+
+    <sql id="orderResult">
+        oi.`order_time` AS orderTime,
+        oi.`need_deploy` AS needDeploy,
+        oi.`payment_type` AS paymentType
+    </sql>
+
+    <sql id="cusResult">
+        ci.`pro_name` AS proName,
+        ci.`create_date` AS createDate,
+        ci.`start_date` AS startDate,
+        ci.`cycle` AS cycle
+    </sql>
+
+    <!-- 根据开发者ID获取非定制项目收益统计 -->
+    <select id="nonCustomized" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="wealthResult"/>,
+        <include refid="orderResult"/>,
+        pi.pro_name
+        FROM
+        wealth_assign wa
+        LEFT JOIN order_info oi ON ( oi.`code` = wa.order_code )
+        LEFT JOIN project_info pi ON (pi.`code` = oi.pro_code)
+        WHERE
+        (wa.developer_a = #{ teamUserId }
+        OR wa.developer_b = #{ teamUserId }
+        OR wa.developer_c = #{ teamUserId })
+        AND wa.order_code LIKE '%ORD%'
+    </select>
+
+    <!-- 根据开发者ID获取定制项目收益统计 -->
+    <select id="customized" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="wealthResult"/>,
+        <include refid="cusResult"/>
+        FROM
+        wealth_assign wa
+        LEFT JOIN customize_info ci ON ( ci.`code` = wa.order_code )
+        WHERE
+        (wa.developer_a = #{ teamUserId }
+        OR wa.developer_b = #{ teamUserId }
+        OR wa.developer_c = #{ teamUserId })
+        AND wa.order_code LIKE '%CUS%'
+    </select>
+
+    <!-- 根据开发者ID获取定制论文收益 -->
+    <select id="thesis" resultType="java.util.LinkedHashMap">
+
+    </select>
+
+    <!-- 查看成品收益记录 -->
+    <select id="selectFinshedProductWealthPartByInvite" resultType="com.fate.archer.cos.entity.vo.IncomeDetailVo">
+        SELECT
+        oi.code           AS orderCode,
+        '1'               AS incomeType,
+        pi.pro_name       AS orderName,
+        wa.wealth         AS wealthAmount,
+        <if test="role != null and role = 1">
+            wa.platform_balance AS partWealth,
+        </if>
+        <if test="role != null and role = 2">
+            wa.developer_balance AS partWealth,
+        </if>
+        <if test="role != null and role = 3">
+            wa.invite_balance AS partWealth,
+        </if>
+        wa.create_date    AS createDate,
+        ui.account        AS userName,
+        ui.head_img_url   AS avatar
+        FROM order_info oi
+        LEFT JOIN project_info pi ON (pi.code = oi.pro_code)
+        LEFT JOIN user_info ui ON (ui.code = oi.user_code)
+        LEFT JOIN wealth_assign wa ON (wa.order_code = oi.code)
+        WHERE oi.order_status = 1
+        AND oi.code IN
+        <foreach item="code" collection="orderCodes" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        ORDER BY oi.order_time DESC
+    </select>
+
+    <!-- 查看附件收益记录 -->
+    <select id="selectAnnexWealthPartByInvite" resultType="com.fate.archer.cos.entity.vo.IncomeDetailVo">
+        SELECT
+        ao.code           AS orderCode,
+        '3'               AS incomeType,
+        ai.annex_name     AS orderName,
+        wa.wealth         AS wealthAmount,
+        <if test="role != null and role = 1">
+            wa.platform_balance AS partWealth,
+        </if>
+        <if test="role != null and role = 2">
+            wa.developer_balance AS partWealth,
+        </if>
+        <if test="role != null and role = 3">
+            wa.invite_balance AS partWealth,
+        </if>
+        wa.create_date    AS createDate,
+        ui.account        AS userName,
+        ui.head_img_url   AS avatar
+        FROM wealth_assign wa
+        LEFT JOIN annex_order ao ON (ao.code = wa.order_code)
+        LEFT JOIN annex_info ai ON (ai.code = ao.annex_code)
+        LEFT JOIN user_info ui ON (ui.code = ao.user_code)
+        WHERE 1 = 1
+        AND ao.code IN
+        <foreach item="code" collection="orderCodes" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        ORDER BY ao.order_time DESC
+    </select>
+
+    <!-- 查看定制收益记录 -->
+    <select id="selectCustomWealthList" resultType="com.fate.archer.cos.entity.vo.IncomeDetailVo">
+        SELECT
+        ci.code           AS orderCode,
+        '2'               AS incomeType,
+        ci.pro_name       AS orderName,
+        wa.wealth         AS wealthAmount,
+        <if test="role != null and role = 1">
+            wa.platform_balance AS partWealth,
+        </if>
+        <if test="role != null and role = 2">
+            wa.developer_balance AS partWealth,
+        </if>
+        <if test="role != null and role = 3">
+            wa.invite_balance AS partWealth,
+        </if>
+        wa.create_date    AS createDate,
+        ui.account        AS userName,
+        ui.head_img_url   AS avatar
+        FROM wealth_assign wa
+        LEFT JOIN customize_info ci ON (ci.code = wa.order_code)
+        LEFT JOIN user_info ui ON (ui.code = ci.user_code)
+        WHERE 1 = 1
+        AND ci.status = 5
+        AND ci.code IN
+        <foreach item="code" collection="orderCodes" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        ORDER BY CI.create_date
+    </select>
+</mapper>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.ProjectInfoMapper">
+
+    <!-- 获取Top项目 -->
+    <select id="getProInfoTop" resultType="java.util.LinkedHashMap" parameterType="java.lang.String">
+        SELECT
+        id,
+        pro_name AS proName,
+        pro_introduce AS proIntroduce,
+        pro_pic AS proPic,
+        pro_type AS proType
+        FROM
+        project_info
+        WHERE del_flag = 0
+        ORDER BY
+        turnover DESC
+        LIMIT 0,6
+    </select>
+
+    <!-- 分页查询项目信息 -->
+    <select id="getProjectPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        pi.id,
+        pi.pro_name AS proName,
+        pi.pro_introduce AS proIntroduce,
+        pi.pro_pic AS proPic,
+        pi.pro_type AS proType
+        FROM
+        project_info pi
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            AND pi.del_flag = 0
+            <if test="proType != null and proType != -1">
+                AND pi.pro_type = #{proType}
+            </if>
+            <if test="key != null">
+                AND pi.pro_sort LIKE CONCAT('%',#{key},'%')
+            </if>
+        </trim>
+        ORDER BY
+        turnover DESC
+    </select>
+
+    <!-- 根据ID获取项目信息 -->
+    <select id="getProjectById" resultType="java.util.LinkedHashMap" parameterType="java.lang.Integer">
+        SELECT
+            pi.id,
+            pi.`code`,
+            pi.pro_name AS proName,
+            pi.pro_introduce AS proIntroduce,
+            pi.pro_pic AS proPic,
+            pi.pro_type AS proType,
+            pi.pro_price AS proPrice,
+            pi.pro_technology AS proTechnology,
+            pi.pro_voide AS proVoide,
+            pi.pro_sort AS proSort,
+            pi.visits,
+            pi.release_time AS releaseTime,
+            pi.release_user AS releaseUser,
+            pi.author,
+            pi.author_name AS authorName,
+            pi.video_address AS videoAddress
+        FROM
+            project_info pi
+        WHERE
+            pi.id = #{id}
+    </select>
+
+    <!-- 获取全部项目信息（去掉非必要字段） -->
+    <select id="getProjectLess" resultType="java.util.LinkedHashMap">
+        SELECT
+        pi.`code`,
+        pi.`pro_name` AS proName,
+        pi.`pro_type` AS proType,
+        pi.`author_name` AS authorName,
+        ti.`avatar`
+        FROM
+        project_info pi
+        LEFT JOIN team_info ti ON (ti.`id` = pi.`author`)
+        WHERE pi.del_flag = 0
+    </select>
+
+    <!-- 根据项目名称模糊查询 -->
+    <select id="getProFuzzyQuery" resultType="java.util.LinkedHashMap">
+        SELECT
+        pi.`code`,
+        pi.`pro_name` AS proName,
+        pi.`pro_type` AS proType,
+        pi.`author_name` AS authorName,
+        ti.`avatar`
+        FROM
+        project_info pi
+        LEFT JOIN team_info ti ON (ti.`id` = pi.`author`)
+        WHERE pi.del_flag = 0
+        <if test="proName != null and proName != ''">
+            AND pi.pro_name LIKE CONCAT('%',#{proName},'%')
+        </if>
+        LIMIT 6
+    </select>
+
+    <!-- 用户端项目分页查询 -->
+    <select id="selectProductList" resultType="java.util.LinkedHashMap">
+        SELECT
+        pi.`code`,
+        pi.pro_name AS proName,
+        pi.pro_introduce AS proIntroduce,
+        pi.pro_pic AS proPic,
+        pi.pro_price AS proPrice,
+        pi.pro_type AS proType,
+        pi.turnover
+        FROM
+        project_info pi
+        WHERE
+        pi.del_flag = 0
+        <if test="key != null and key != ''">
+            AND pi.pro_name LIKE CONCAT('%',#{key},'%')
+        </if>
+        GROUP BY
+        pi.`code`
+        <if test="sortType == 2">
+            ORDER BY pi.turnover DESC
+        </if>
+        <if test="sortType == 3">
+            ORDER BY pi.pro_price DESC
+        </if>
+        <if test="sortType == 4">
+            ORDER BY pi.release_time DESC
+        </if>
+    </select>
+</mapper>

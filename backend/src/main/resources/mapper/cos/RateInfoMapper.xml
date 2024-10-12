@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fate.archer.cos.dao.RateInfoMapper">
+    <select id="customNot" resultType="java.util.LinkedHashMap">
+        SELECT
+            ri.role,
+            ri.rate
+        FROM
+            rate_info ri
+        WHERE
+            ri.flag = 2
+          AND is_invite = 2
+        GROUP BY ri.role
+
+    </select>
+
+    <select id="customNotInvite" resultType="java.util.LinkedHashMap">
+        SELECT
+            ri.role,
+            ri.rate
+        FROM
+            rate_info ri
+        WHERE
+            ri.flag = 2
+          AND is_invite = 1
+        GROUP BY ri.role
+    </select>
+
+    <select id="custom" resultType="java.util.LinkedHashMap">
+        SELECT
+            ri.role,
+            ri.rate
+        FROM
+            rate_info ri
+        WHERE
+            ri.flag = 1
+          AND is_invite = 2
+        GROUP BY ri.role
+    </select>
+
+    <select id="customInvite" resultType="java.util.LinkedHashMap">
+        SELECT
+            ri.role,
+            ri.rate
+        FROM
+            rate_info ri
+        WHERE
+            ri.flag = 1
+          AND is_invite = 1
+        GROUP BY ri.role
+    </select>
+</mapper>
