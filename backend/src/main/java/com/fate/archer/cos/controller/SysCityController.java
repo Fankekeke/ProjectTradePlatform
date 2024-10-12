@@ -32,7 +32,7 @@ public class SysCityController {
      */
     @Log("查询城市信息")
     @GetMapping("/page")
-    public R page(Page page, SysCity sysCity) {
+    public R page(Page<SysCity> page, SysCity sysCity) {
         return R.ok(sysCityService.getCityByPage(page, sysCity));
     }
 

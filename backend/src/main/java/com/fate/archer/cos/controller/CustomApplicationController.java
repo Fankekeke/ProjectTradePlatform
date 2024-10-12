@@ -30,13 +30,13 @@ public class CustomApplicationController {
     /**
      * 定制申请分页查询
      *
-     * @param page 分页对象
+     * @param page              分页对象
      * @param customApplication 定制申请
      * @return 定制申请列表
      */
     @Log("定制申请分页查询")
     @GetMapping("/page")
-    public R customApplicationPage(Page page, CustomApplication customApplication) {
+    public R customApplicationPage(Page<CustomApplication> page, CustomApplication customApplication) {
         return R.ok(customApplicationService.customApplicationPage(page, customApplication));
     }
 

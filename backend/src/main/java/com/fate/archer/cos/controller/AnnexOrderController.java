@@ -34,7 +34,7 @@ public class AnnexOrderController {
      */
     @Log("分页查询附件订单信息")
     @GetMapping("/page")
-    public R page(Page page, AnnexOrder annexOrder) {
+    public R page(Page<AnnexOrder> page, AnnexOrder annexOrder) {
         return R.ok(annexOrderService.annexOrderPage(page, annexOrder));
     }
 

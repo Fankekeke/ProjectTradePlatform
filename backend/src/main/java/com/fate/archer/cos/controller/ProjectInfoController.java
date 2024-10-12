@@ -34,7 +34,7 @@ public class ProjectInfoController {
      */
     @Log("查询项目信息")
     @GetMapping("/page")
-    public R getOrderInfoByPage(Page page, ProjectInfo projectInfo) {
+    public R getOrderInfoByPage(Page<ProjectInfo> page, ProjectInfo projectInfo) {
         return R.ok(iProjectInfoService.page(page, Wrappers.<ProjectInfo>lambdaQuery()
                 .like(projectInfo.getProName() != null, ProjectInfo::getProName, projectInfo.getProName())
                 .like(projectInfo.getProTechnology() != null, ProjectInfo::getProTechnology, projectInfo.getProTechnology())));

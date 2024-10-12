@@ -32,7 +32,7 @@ public class MessInfoController {
      */
     @Log("查询消息箱")
     @GetMapping("/page")
-    public R getMessInfoByPage(Page page, MessInfo messInfo) {
+    public R getMessInfoByPage(Page<MessInfo> page, MessInfo messInfo) {
         return R.ok(iMessInfoService.page(page, Wrappers.query(messInfo).orderByDesc("mess_time")));
     }
 

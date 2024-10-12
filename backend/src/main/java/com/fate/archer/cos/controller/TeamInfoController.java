@@ -32,7 +32,7 @@ public class TeamInfoController {
      */
     @Log("查询团队")
     @GetMapping("/page")
-    public R page(Page page, TeamInfo teamInfo) {
+    public R page(Page<TeamInfo> page, TeamInfo teamInfo) {
         return R.ok(teamInfoService.getTeamByPage(page, teamInfo));
     }
 

@@ -26,13 +26,13 @@ public class SysSchoolController {
     /**
      * 查询学校信息
      *
-     * @param page 分页对象
+     * @param page      分页对象
      * @param sysSchool 学校信息
      * @return 学校列表
      */
     @Log("查询学校信息")
     @GetMapping("/page")
-    public R page(Page page, SysSchool sysSchool) {
+    public R page(Page<SysSchool> page, SysSchool sysSchool) {
         return R.ok(sysSchoolService.getSchoolByPage(page, sysSchool));
     }
 

@@ -33,7 +33,7 @@ public class NoticeInfoController {
      */
     @Log("查询公告信息")
     @GetMapping("/page")
-    public R getNoticeInfoByPage(Page page, NoticeInfo noticeInfo) {
+    public R getNoticeInfoByPage(Page<NoticeInfo> page, NoticeInfo noticeInfo) {
         return R.ok(iNoticeInfoService.page(page, Wrappers.query(noticeInfo).orderByDesc("send_date")));
     }
 

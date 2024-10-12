@@ -27,11 +27,11 @@ public class EvaluationController {
      *
      * @param page       分页对象
      * @param evaluation 评价信息
-     * @return
+     * @return 结果
      */
     @Log("分页查询订单评价")
     @GetMapping("/page")
-    public R page(Page page, Evaluation evaluation) {
+    public R page(Page<Evaluation> page, Evaluation evaluation) {
         return R.ok(evaluationService.getEvaluationPage(page, evaluation));
     }
 

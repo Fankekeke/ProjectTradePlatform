@@ -26,10 +26,10 @@ public class TeamTakeReviewController {
      *
      * @param page           分页对象
      * @param teamTakeReview 开发者提现记录
-     * @return
+     * @return 结果
      */
     @GetMapping("/page")
-    public R page(Page page, TeamTakeReview teamTakeReview) {
+    public R page(Page<TeamTakeReview> page, TeamTakeReview teamTakeReview) {
         return R.ok(teamTakeReviewService.selectTeamTakeReviewPage(page, teamTakeReview));
     }
 

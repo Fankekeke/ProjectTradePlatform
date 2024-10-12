@@ -37,7 +37,7 @@ public class CustomizeInfoController {
      */
     @Log("分页查询项目定制信息")
     @GetMapping("/page")
-    public R page(Page page, CustomizeInfo customizeInfo) {
+    public R page(Page<CustomizeInfo> page, CustomizeInfo customizeInfo) {
         return R.ok(customizeInfoService.customizeInfoPage(page, customizeInfo));
     }
 

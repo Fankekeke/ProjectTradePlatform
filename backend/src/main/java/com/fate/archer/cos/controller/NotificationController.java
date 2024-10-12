@@ -34,7 +34,7 @@ public class NotificationController {
      */
     @Log("查询消息通知")
     @GetMapping("/page")
-    public R page(Page page, Notification notification) {
+    public R page(Page<Notification> page, Notification notification) {
         return R.ok(notificationService.page(page, notification));
     }
 

@@ -22,13 +22,14 @@ public class CustomizePaymentProcessController {
 
     /**
      * 分页查询定制流程
-     * @param page
-     * @param customizePaymentProcess
-     * @return
+     *
+     * @param page                    分页对象
+     * @param customizePaymentProcess 定制流程
+     * @return 结果
      */
     @Log("分页查询定制流程")
     @GetMapping("/page")
-    public R page (Page page, CustomizePaymentProcess customizePaymentProcess) {
+    public R page(Page<CustomizePaymentProcess> page, CustomizePaymentProcess customizePaymentProcess) {
         return R.ok();
     }
 }

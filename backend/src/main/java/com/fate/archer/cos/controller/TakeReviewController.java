@@ -41,7 +41,7 @@ public class TakeReviewController {
      */
     @Log("查询提现申请")
     @GetMapping("/page")
-    public R page(Page page, TakeReview takeReview) {
+    public R page(Page<TakeReview> page, TakeReview takeReview) {
         return R.ok(takeReviewService.takeReviewPage(page, takeReview));
     }
 

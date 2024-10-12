@@ -31,7 +31,7 @@ public class ThesisInfoController {
      * @return 结果
      */
     @GetMapping("/page")
-    public R page(Page page, ThesisInfo thesisInfo) {
+    public R page(Page<ThesisInfo> page, ThesisInfo thesisInfo) {
         return R.ok(thesisInfoService.selectThesisInfoPage(page, thesisInfo));
     }
 

@@ -49,7 +49,7 @@ public class OrderInfoController {
      */
     @Log("查询订单")
     @GetMapping("/page")
-    public R getOrderInfoByPage(Page page, OrderInfo orderInfo) {
+    public R getOrderInfoByPage(Page<OrderInfo> page, OrderInfo orderInfo) {
         return R.ok(iOrderInfoService.getOrderInfoByPage(page, orderInfo));
     }
 
@@ -115,6 +115,7 @@ public class OrderInfoController {
      *
      * @param proCode 项目编号
      */
+    @GetMapping("/projectTurnover")
     public void projectTurnover(String proCode) {
         ProjectInfo projectInfo = iProjectInfoService.getOne(Wrappers.<ProjectInfo>lambdaQuery().eq(ProjectInfo::getCode, proCode));
         if (projectInfo != null) {

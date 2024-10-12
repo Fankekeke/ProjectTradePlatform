@@ -31,7 +31,7 @@ public class TakeMoneyController {
      */
     @Log("查询提现记录")
     @GetMapping("/page")
-    public R page(Page page, TakeMoney takeMoney) {
+    public R page(Page<TakeMoney> page, TakeMoney takeMoney) {
         return R.ok();
     }
 

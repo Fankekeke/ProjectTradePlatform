@@ -23,13 +23,13 @@ public class MessageTipController {
     /**
      * 分页查询消息通知信息
      *
-     * @param page 分页对象
+     * @param page       分页对象
      * @param messageTip 消息通知信息
      * @return 消息通知列表
      */
     @Log("查询消息通知信息")
     @GetMapping("/page")
-    public R page(Page page, MessageTip messageTip) {
+    public R page(Page<MessageTip> page, MessageTip messageTip) {
         return R.ok(messageTipService.getMessageByPage(page, messageTip));
     }
 

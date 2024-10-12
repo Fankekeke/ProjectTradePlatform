@@ -35,7 +35,7 @@ public class AnnexInfoController {
      */
     @Log("分页查询附件信息")
     @GetMapping("/page")
-    public R page(Page page, AnnexInfo annexInfo) {
+    public R page(Page<AnnexInfo> page, AnnexInfo annexInfo) {
         return R.ok(annexInfoService.page(page, annexInfo));
     }
 
@@ -122,7 +122,7 @@ public class AnnexInfoController {
      * @return 附件列表
      */
     @GetMapping("/list/page")
-    public R selectAnnexPage(Page page, Integer sortType, String key) {
+    public R selectAnnexPage(Page<AnnexInfo> page, Integer sortType, String key) {
         return R.ok(annexInfoService.selectAnnexPage(page, sortType, key));
     }
 

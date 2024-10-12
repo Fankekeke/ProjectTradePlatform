@@ -45,7 +45,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     private final UserInfoMapper userInfoMapper;
 
     @Override
-    public IPage<OrderInfo> getOrderInfoByPage(Page page, OrderInfo orderInfo) {
+    public IPage<OrderInfo> getOrderInfoByPage(Page<OrderInfo> page, OrderInfo orderInfo) {
         return baseMapper.getOrderInfoByPage(page, orderInfo);
     }
 
@@ -75,7 +75,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
     @Override
-    public IPage<OrderInfo> orderHistoryByUserCodePage(Page page, String userCode) {
+    public IPage<OrderInfo> orderHistoryByUserCodePage(Page<OrderInfo> page, String userCode) {
         return baseMapper.orderHistoryByUserCodePage(page, userCode);
     }
 
@@ -155,6 +155,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         if (lastYearMonthAllPrice.compareTo(BigDecimal.ZERO) == 0) {
             yearPriceOnRate = new BigDecimal(100);
         } else {
+            yearPriceOnRate = orderAllMonthPrice.subtract(lastYearMonthAllPrice).divide(lastYearMonthAllPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
             yearPriceOnRate = orderAllMonthPrice.subtract(lastYearMonthAllPrice).divide(lastYearMonthAllPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
         }
         // 收益-月环比
@@ -242,7 +243,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
      * @return 订单信息
      */
     @Override
-    public IPage<LinkedHashMap<String, Object>> orderListByUser(Page page, String userCode) {
+    public IPage<LinkedHashMap<String, Object>> orderListByUser(Page<?> page, String userCode) {
         return baseMapper.orderListByUser(page, userCode);
     }
 

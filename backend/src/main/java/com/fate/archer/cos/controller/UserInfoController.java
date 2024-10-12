@@ -38,7 +38,7 @@ public class UserInfoController {
      */
     @Log("查询用户信息")
     @GetMapping("/page")
-    public R page(Page page, UserInfo userInfo) {
+    public R page(Page<UserInfo> page, UserInfo userInfo) {
         return R.ok(userInfoService.getUserPage(page, userInfo));
     }
 

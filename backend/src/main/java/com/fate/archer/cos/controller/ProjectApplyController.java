@@ -36,13 +36,13 @@ public class ProjectApplyController {
     /**
      * 查询我的项目
      *
-     * @param page 分页对象
+     * @param page         分页对象
      * @param projectApply 我的项目
      * @return 我的项目列表
      */
     @Log("查询我的项目")
     @GetMapping("/page")
-    public R page(Page page, ProjectApply projectApply) {
+    public R page(Page<ProjectApply> page, ProjectApply projectApply) {
         return R.ok(projectApplyService.projectApplyPage(page, projectApply));
     }
 
@@ -63,7 +63,7 @@ public class ProjectApplyController {
     /**
      * 项目审核
      *
-     * @param id 审核项目Id
+     * @param id     审核项目Id
      * @param status 审核状态
      * @return 返回结果
      */
