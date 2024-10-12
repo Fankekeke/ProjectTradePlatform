@@ -156,7 +156,6 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             yearPriceOnRate = new BigDecimal(100);
         } else {
             yearPriceOnRate = orderAllMonthPrice.subtract(lastYearMonthAllPrice).divide(lastYearMonthAllPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
-            yearPriceOnRate = orderAllMonthPrice.subtract(lastYearMonthAllPrice).divide(lastYearMonthAllPrice, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
         }
         // 收益-月环比
         BigDecimal monthPriceOnRate;
