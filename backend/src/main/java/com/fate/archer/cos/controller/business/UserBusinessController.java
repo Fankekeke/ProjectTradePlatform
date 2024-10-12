@@ -17,7 +17,6 @@ import com.fate.archer.cos.entity.SysSchool;
 import com.fate.archer.cos.entity.UserInfo;
 import com.fate.archer.cos.service.*;
 import com.fate.archer.system.domain.User;
-import com.sun.org.apache.regexp.internal.RE;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.activemq.command.ActiveMQQueue;
@@ -33,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.util.Date;
 
 @Controller
@@ -56,8 +56,9 @@ public class UserBusinessController {
 
     /**
      * 学校信息联想
-     * @param key
-     * @return
+     *
+     * @param key 关键字
+     * @return 结果
      */
     @ResponseBody
     @GetMapping("/united/{key}")
@@ -67,9 +68,10 @@ public class UserBusinessController {
 
     /**
      * 更新用户基本信息
-     * @param session
-     * @param request
-     * @return
+     *
+     * @param session session
+     * @param request 请求
+     * @return 结果
      */
     @ResponseBody
     @PutMapping("/user/data")
@@ -86,23 +88,22 @@ public class UserBusinessController {
                 session.setAttribute("user", userInfoService.getById(user.getId()));
                 return R.ok(true);
             }
-            return R.ok(false);
-        } else {
-            return R.ok(false);
         }
+        return R.ok(false);
     }
 
     /**
      * 发送手机验证码
-     * @param phone
-     * @return
-     * @throws Exception
+     *
+     * @param phone 手机号码
+     * @return 结果
+     * @throws Exception 异常
      */
     @ResponseBody
     @PostMapping("/sendVerify")
     public R sendVerifyCode(@RequestParam("phone") String phone) throws Exception {
         // 判断手机号码是否已被注册
-        Integer count = userInfoService.count(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getPhone, phone));
+        int count = userInfoService.count(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getPhone, phone));
         if (count > 0) {
             return R.error("该手机号码已被注册");
         } else {
@@ -123,11 +124,12 @@ public class UserBusinessController {
 
     /**
      * 绑定手机号码
-     * @param mobile
-     * @param verifyCode
-     * @param session
-     * @return
-     * @throws Exception
+     *
+     * @param mobile     手机号码
+     * @param verifyCode 验证码
+     * @param session    session
+     * @return 结果
+     * @throws Exception 异常
      */
     @ResponseBody
     @PostMapping("/check/mobile")
@@ -160,22 +162,24 @@ public class UserBusinessController {
 
     /**
      * 用户历史订单
-     * @param pageNo
-     * @param userCode
-     * @return
+     *
+     * @param pageNo   当前页数
+     * @param userCode 用户编号
+     * @return 结果
      */
     @ResponseBody
     @GetMapping("/orderHistory")
     public R orderHistoryByUserCodePage(@RequestParam("pageNo") Integer pageNo, @RequestParam("userCode") String userCode) {
-        Page page = new Page();
+        Page<OrderInfo> page = new Page<>();
         page.setCurrent(pageNo);
         return R.ok(orderInfoService.page(page, Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getUserCode, userCode)));
     }
 
     /**
      * 根据订单编号获取详细信息
-     * @param orderCode
-     * @return
+     *
+     * @param orderCode 订单编号
+     * @return 结果
      */
     @ResponseBody
     @GetMapping("/orderInfoByCode")
@@ -191,12 +195,13 @@ public class UserBusinessController {
 
     /**
      * 添加订单评价
-     * @param orderCode
-     * @param score
-     * @param content
-     * @param pic
-     * @param session
-     * @return
+     *
+     * @param orderCode 订单编号
+     * @param score     评价分数
+     * @param content   内容
+     * @param pic       图片
+     * @param session   session
+     * @return 结果
      */
     @ResponseBody
     @PostMapping("/evaluationOrder")
@@ -216,25 +221,25 @@ public class UserBusinessController {
 
     /**
      * 文件
-     * @param file
-     * @return
+     *
+     * @param file 文件
+     * @return 结果
      */
     @ResponseBody
     @PostMapping("/fileUpload")
-    public String upload(@RequestParam("avatar") MultipartFile file){
+    public String upload(@RequestParam("avatar") MultipartFile file) {
         // 1定义要上传文件 的存放路径
-        String localPath = ""+BusinessConstant.FILEADDRESS+"db/image";
+        String localPath = "" + BusinessConstant.FILEADDRESS + "db/image";
         // 2获得文件名字
         String fileName = file.getOriginalFilename();
         // 2上传失败提示
-        String warning="";
+        String warning = "";
         String newFileName = FileUtils.upload(file, localPath, fileName);
-        MultipartFile file1 = file;
-        if(newFileName != null){
+        if (newFileName != null) {
             //上传成功
-            warning=newFileName;
-        }else{
-            warning="上传失败";
+            warning = newFileName;
+        } else {
+            warning = "上传失败";
         }
         System.out.println(warning);
         return warning;
@@ -242,8 +247,9 @@ public class UserBusinessController {
 
     /**
      * 文件下载
-     * @param fileName
-     * @param response
+     *
+     * @param fileName 文件名称
+     * @param response 对象
      */
     @ResponseBody
     @GetMapping("download/{fileName}")
@@ -256,7 +262,7 @@ public class UserBusinessController {
         OutputStream os = null;
         try {
             os = response.getOutputStream();
-            bis = new BufferedInputStream(new FileInputStream(new File(BusinessConstant.FILEADDRESS +"file/"+ fileName)));
+            bis = new BufferedInputStream(Files.newInputStream(new File(BusinessConstant.FILEADDRESS + "file/" + fileName).toPath()));
             int i = bis.read(buff);
             while (i != -1) {
                 os.write(buff, 0, buff.length);
@@ -278,8 +284,9 @@ public class UserBusinessController {
 
     /**
      * 附件下载
-     * @param fileName
-     * @param response
+     *
+     * @param fileName 文件名称
+     * @param response 返回
      */
     @ResponseBody
     @GetMapping("downloadAnnex/{fileName}")
@@ -292,7 +299,7 @@ public class UserBusinessController {
         OutputStream os = null;
         try {
             os = response.getOutputStream();
-            bis = new BufferedInputStream(new FileInputStream(new File(BusinessConstant.ANNEXADDRESS +""+ fileName)));
+            bis = new BufferedInputStream(Files.newInputStream(new File(BusinessConstant.ANNEXADDRESS + "" + fileName).toPath()));
             int i = bis.read(buff);
             while (i != -1) {
                 os.write(buff, 0, buff.length);

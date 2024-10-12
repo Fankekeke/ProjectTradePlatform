@@ -9,19 +9,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+
+/**
+ * 支付操作
+ *
+ * @Author FanK
+ * @Date 2024-10-11 09:21:29
+ * @Copyright 橘子森林
+ */
 @RestController
 @RequestMapping("/cos/pay")
 public class PayController {
 
-    @Autowired
+    @Resource
     private PayService payService;
 
     /**
-     * 阿里支付
-     * @param subject
-     * @param body
-     * @return
-     * @throws AlipayApiException
+     * 支付宝沙盒支付
+     *
+     * @param outTradeNo  订单号
+     * @param subject     账目标注
+     * @param totalAmount 总价格
+     * @param body        备注
+     * @return 结果
+     * @throws AlipayApiException 异常
      */
     @PostMapping(value = "/alipay")
     public R alipay(String outTradeNo, String subject, String totalAmount, String body) throws AlipayApiException {

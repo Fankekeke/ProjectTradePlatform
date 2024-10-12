@@ -27,7 +27,8 @@ public class StatisticsController {
 
     /**
      * 系统主页信息
-     * @return
+     *
+     * @return 结果
      */
     @GetMapping("/home")
     public R homePageData(@RequestParam("roleFlag") Integer roleFlag) {
@@ -36,10 +37,11 @@ public class StatisticsController {
 
     /**
      * 系统主页订单统计
-     * @param startDate
-     * @param type
-     * @param endDate
-     * @return
+     *
+     * @param startDate 开始时间
+     * @param type      类型
+     * @param endDate   结束时间
+     * @return 结果
      */
     @GetMapping("/orderStatistics")
     public R orderStatistics(@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate, @RequestParam("type") Integer type) {

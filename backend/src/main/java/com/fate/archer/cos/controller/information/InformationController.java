@@ -62,8 +62,9 @@ public class InformationController {
 
     /**
      * 进入个人信息页面
-     * @param userId
-     * @return
+     *
+     * @param userId 用户ID
+     * @return 结果
      */
     @Log("进入个人信息页面")
     @GetMapping("/home")
@@ -101,8 +102,9 @@ public class InformationController {
 
     /**
      * 根据开发者ID获取任务
-     * @param userId
-     * @return
+     *
+     * @param userId 用户ID
+     * @return 结果
      */
     @GetMapping("/task")
     public R taskList(@RequestParam("userId") Integer userId) {
@@ -112,8 +114,9 @@ public class InformationController {
 
     /**
      * 根据开发者ID获取订单
-     * @param userId
-     * @return
+     *
+     * @param userId 用户ID
+     * @return 结果
      */
     @GetMapping("/order")
     public R orderList(@RequestParam("userId") Integer userId) {
@@ -123,16 +126,17 @@ public class InformationController {
 
     /**
      * 系统用户验证手机号码
-     * @param mobile
-     * @param userId
-     * @return
-     * @throws Exception
+     *
+     * @param mobile 手机号码
+     * @param userId 用户ID
+     * @return 结果
+     * @throws Exception 异常
      */
     @Log("系统用户验证手机号码")
     @GetMapping("/verify/mobile")
     public R mobileVerify(@RequestParam("mobile") String mobile, @RequestParam("userId") Integer userId) throws Exception {
         // 判断手机号码是否已被注册
-        Integer count = userService.count(Wrappers.<User>lambdaQuery().eq(User::getMobile, mobile));
+        int count = userService.count(Wrappers.<User>lambdaQuery().eq(User::getMobile, mobile));
         if (count > 0) {
             return R.error("该手机号码已被注册");
         } else {
@@ -154,16 +158,17 @@ public class InformationController {
 
     /**
      * 系统用户验证邮箱地址
-     * @param mail
-     * @param userId
-     * @return
-     * @throws Exception
+     *
+     * @param mail   邮箱地址
+     * @param userId 用户ID
+     * @return 结果
+     * @throws Exception 异常
      */
     @Log("系统用户验证邮箱地址")
     @GetMapping("/verify/mail")
     public R mailVerify(@RequestParam("mail") String mail, @RequestParam("userId") Integer userId) throws Exception {
         // 判断邮箱是否已经注册
-        Integer count = userService.count(Wrappers.<User>lambdaQuery().eq(User::getEmail, mail));
+        int count = userService.count(Wrappers.<User>lambdaQuery().eq(User::getEmail, mail));
         if (count > 0) {
             return R.error("该邮箱地址已被注册");
         } else {
@@ -185,11 +190,12 @@ public class InformationController {
 
     /**
      * 验证识别码更换邮箱
-     * @param mail
-     * @param verifyCode
-     * @param userId
-     * @return
-     * @throws Exception
+     *
+     * @param mail       邮箱地址
+     * @param verifyCode 验证码
+     * @param userId     用户ID
+     * @return 结果
+     * @throws Exception 异常
      */
     @Log("验证识别码更换邮箱")
     @GetMapping("/check/mail")
@@ -218,11 +224,12 @@ public class InformationController {
 
     /**
      * 验证识别码更换手机
-     * @param mobile
-     * @param verifyCode
-     * @param userId
-     * @return
-     * @throws Exception
+     *
+     * @param mobile     手机号码
+     * @param verifyCode 验证码
+     * @param userId     用户ID
+     * @return 结果
+     * @throws Exception 异常
      */
     @Log("验证识别码更换手机")
     @GetMapping("/check/mobile")
