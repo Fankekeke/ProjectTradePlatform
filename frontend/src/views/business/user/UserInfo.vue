@@ -7,7 +7,7 @@
     :footer="null"
     :width="1000"
     @cancel="handleCancelClick">
-    <div style="font-size: 13px" v-if="show">
+    <div style="font-size: 13px" v-if="userData != null">
       <a-row style="padding-left: 24px;padding-right: 24px;">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">基础信息</span></a-col>
         <a-col :span="6"><b>用户编号：</b>{{ userData.code }}</a-col>

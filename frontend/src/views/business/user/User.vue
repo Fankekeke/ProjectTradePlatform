@@ -206,7 +206,7 @@ export default {
     },
     userClose () {
       this.userInfo.show = false
-      this.userInfo.data = null
+      // this.userInfo.data = null
     },
     onPickerChange (date, dateString) {
       if (date.length !== 0) {
