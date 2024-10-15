@@ -182,7 +182,8 @@ export default {
     columns () {
       return [{
         title: '项目名称',
-        dataIndex: 'proName'
+        dataIndex: 'proName',
+        ellipsis: true
       }, {
         title: '项目类型',
         dataIndex: 'proType',
@@ -199,11 +200,13 @@ export default {
             default:
               return text
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '项目分类',
         dataIndex: 'proSort',
-        scopedSlots: { customRender: 'proSortShow' }
+        scopedSlots: { customRender: 'proSortShow' },
+        ellipsis: true
       }, {
         title: '当前状态',
         dataIndex: 'proStatus',
@@ -228,15 +231,18 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '项目介绍',
         dataIndex: 'proIntroduce',
-        scopedSlots: { customRender: 'proIntroduceShow' }
+        scopedSlots: { customRender: 'proIntroduceShow' },
+        ellipsis: true
       }, {
         title: '项目技术',
         dataIndex: 'proTechnology',
-        scopedSlots: { customRender: 'proTechnologyShow' }
+        scopedSlots: { customRender: 'proTechnologyShow' },
+        ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',

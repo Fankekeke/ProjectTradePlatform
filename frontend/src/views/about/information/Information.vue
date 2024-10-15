@@ -1,7 +1,7 @@
 <template>
   <div style="font-size: 13px">
     <a-row :gutter="20">
-      <a-col :span="18">
+      <a-col :span="16">
         <a-spin :spinning="loading">
           <a-calendar>
             <ul slot="dateCellRender" slot-scope="value" class="events">
@@ -18,9 +18,9 @@
           </a-calendar>
         </a-spin>
       </a-col>
-      <a-col :span="6">
+      <a-col :span="8">
         <a-spin :spinning="loading">
-          <a-card hoverable style="width: 75%;margin: 0 auto;margin-top: 13px;" v-if="user !== null">
+          <a-card hoverable style="width: 65%;margin: 0 auto;margin-top: 13px;" v-if="user !== null">
             <img
               slot="cover"
               alt="example"

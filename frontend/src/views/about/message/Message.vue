@@ -110,12 +110,13 @@ export default {
     columns () {
       return [{
         title: '接收用户',
-        dataIndex: 'username'
+        dataIndex: 'username',
+        ellipsis: true
       }, {
         title: '消息标题',
         dataIndex: 'title',
         scopedSlots: { customRender: 'titleShow' },
-        width: 200
+        ellipsis: true
       }, {
         title: '消息类型',
         dataIndex: 'type',
@@ -135,7 +136,7 @@ export default {
         title: '消息内容',
         dataIndex: 'content',
         scopedSlots: { customRender: 'contentShow' },
-        width: 380
+        ellipsis: true
       }, {
         title: '发送时间',
         dataIndex: 'date',
@@ -145,7 +146,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '消息状态',
         dataIndex: 'delFlag',
