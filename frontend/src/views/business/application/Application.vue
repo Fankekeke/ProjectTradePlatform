@@ -127,11 +127,13 @@ export default {
       return [{
         title: '项目名称',
         dataIndex: 'proName',
-        width: 180
+        width: 180,
+        ellipsis: true
       }, {
         title: '客户',
         dataIndex: 'account',
-        width: 180
+        width: 180,
+        ellipsis: true
       }, {
         title: '状态',
         dataIndex: 'customizeCode',
@@ -156,11 +158,13 @@ export default {
       }, {
         title: '联系方式',
         dataIndex: 'contact',
-        width: 150
+        width: 150,
+        ellipsis: true
       }, {
         title: '创建时间',
         dataIndex: 'createDate',
-        width: 200
+        width: 200,
+        ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',

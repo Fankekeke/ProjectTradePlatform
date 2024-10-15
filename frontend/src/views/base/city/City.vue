@@ -118,10 +118,12 @@ export default {
     columns () {
       return [{
         title: '城市名称',
-        dataIndex: 'name'
+        dataIndex: 'name',
+        ellipsis: true
       }, {
         title: '所属',
-        dataIndex: 'parent'
+        dataIndex: 'parent',
+        ellipsis: true
       }, {
         title: '首字母',
         dataIndex: 'initial',
@@ -142,7 +144,8 @@ export default {
         }
       }, {
         title: '城市代码',
-        dataIndex: 'code'
+        dataIndex: 'code',
+        ellipsis: true
       }]
     }
   },

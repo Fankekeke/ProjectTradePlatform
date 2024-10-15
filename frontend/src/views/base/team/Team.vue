@@ -138,13 +138,16 @@ export default {
     columns () {
       return [{
         title: '队伍成员',
-        dataIndex: 'players'
+        dataIndex: 'players',
+        ellipsis: true
       }, {
         title: '所属人员',
         dataIndex: 'username',
+        ellipsis: true
       }, {
         title: '部门',
         dataIndex: 'deptName',
+        ellipsis: true
       }, {
         title: '头像',
         dataIndex: 'avatar',
@@ -180,7 +183,8 @@ export default {
             return '- -'
           }
         },
-        width: 250
+        width: 250,
+        ellipsis: true
       }, {
         title: '电话',
         dataIndex: 'mobile',
@@ -190,7 +194,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '性别',
         dataIndex: 'sex',
@@ -214,7 +219,7 @@ export default {
             return '- -'
           }
         },
-        width: 300
+        ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',

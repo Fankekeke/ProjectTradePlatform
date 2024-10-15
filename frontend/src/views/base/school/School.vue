@@ -110,7 +110,8 @@ export default {
     columns () {
       return [{
         title: '学校名称',
-        dataIndex: 'name'
+        dataIndex: 'name',
+        ellipsis: true
       }, {
         title: '学校地址',
         dataIndex: 'address',
@@ -120,7 +121,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '学校地区',
         dataIndex: 'area',
@@ -130,7 +132,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '人数',
         dataIndex: 'number',
@@ -160,7 +163,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '主管部门',
         dataIndex: 'manage',
@@ -170,7 +174,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '层次',
         dataIndex: 'level',
@@ -180,7 +185,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '类型',
         dataIndex: 'type',
@@ -190,7 +196,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '所在城市',
         dataIndex: 'city'

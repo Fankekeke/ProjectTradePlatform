@@ -159,13 +159,16 @@ export default {
     columns () {
       return [{
         title: '项目名称',
-        dataIndex: 'proName'
+        dataIndex: 'proName',
+        ellipsis: true
       }, {
         title: '订单编号',
         dataIndex: 'code',
+        ellipsis: true
       }, {
         title: '客户',
         dataIndex: 'account',
+        ellipsis: true
       }, {
         title: '状态',
         dataIndex: 'status',
@@ -211,7 +214,8 @@ export default {
         }
       }, {
         title: '创建时间',
-        dataIndex: 'createDate'
+        dataIndex: 'createDate',
+        ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',

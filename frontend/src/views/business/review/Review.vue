@@ -110,6 +110,7 @@ export default {
         title: '申请账户',
         dataIndex: 'account',
         width: 150,
+        ellipsis: true
       }, {
         title: '交易类型',
         dataIndex: 'tradeType',
@@ -149,6 +150,7 @@ export default {
         title: '备注',
         dataIndex: 'remarks',
         scopedSlots: {customRender: 'contentShow'},
+        ellipsis: true
       }, {
         title: '当前状态',
         dataIndex: 'review',
@@ -167,7 +169,8 @@ export default {
         width: 150
       }, {
         title: '申请日期',
-        dataIndex: 'date'
+        dataIndex: 'date',
+        ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',

@@ -117,7 +117,8 @@ export default {
     columns () {
       return [{
         title: '发送时间',
-        dataIndex: 'sendDate'
+        dataIndex: 'sendDate',
+        ellipsis: true
       }, {
         title: '发送账户',
         dataIndex: 'user',
@@ -127,7 +128,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '发送类型',
         dataIndex: 'sendType',

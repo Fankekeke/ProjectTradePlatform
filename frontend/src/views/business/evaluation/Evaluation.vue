@@ -108,6 +108,7 @@ export default {
         title: '项目名称',
         dataIndex: 'proName',
         width: 150,
+        ellipsis: true
       }, {
         title: '项目类型',
         dataIndex: 'proType',
@@ -129,7 +130,8 @@ export default {
       }, {
         title: '购买人',
         dataIndex: 'account',
-        width: 150
+        width: 150,
+        ellipsis: true
       }, {
         title: '支付方式',
         dataIndex: 'paymentType',
@@ -167,9 +169,11 @@ export default {
         title: '评价内容',
         dataIndex: 'content',
         scopedSlots: { customRender: 'contentShow' },
+        ellipsis: true
       }, {
         title: '评价日期',
-        dataIndex: 'date'
+        dataIndex: 'date',
+        ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',
