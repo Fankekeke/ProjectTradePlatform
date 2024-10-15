@@ -160,14 +160,35 @@ export default {
       return [{
         title: '项目名称',
         dataIndex: 'proName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
         ellipsis: true
       }, {
         title: '订单编号',
         dataIndex: 'code',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
         ellipsis: true
       }, {
         title: '客户',
         dataIndex: 'account',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
         ellipsis: true
       }, {
         title: '状态',
@@ -215,6 +236,13 @@ export default {
       }, {
         title: '创建时间',
         dataIndex: 'createDate',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
         ellipsis: true
       }, {
         title: '操作',

@@ -140,16 +140,48 @@ export default {
         width: 130
       }, {
         title: '邮箱',
-        dataIndex: 'email'
+        dataIndex: 'email',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
+        ellipsis: true
       }, {
         title: '电话',
-        dataIndex: 'phone'
+        dataIndex: 'phone',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
+        ellipsis: true
       }, {
         title: '毕业院校',
-        dataIndex: 'schoolName'
+        dataIndex: 'schoolName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
+        ellipsis: true
       }, {
         title: '所在城市',
-        dataIndex: 'cityName'
+        dataIndex: 'cityName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
+        ellipsis: true
       }, {
         title: '性别',
         dataIndex: 'sex',
