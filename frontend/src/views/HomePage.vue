@@ -134,7 +134,7 @@
         <a-spin :spinning="spinning">
           <div style="background: #ECECEC; padding: 30px">
             <a-card hoverable>
-              <div style="height: 397px;padding: 8px 15px;overflow-y: auto">
+              <div style="height: 397px;padding: 8px 15px;overflow-y: auto;font-family: SimHei">
                 <p style="font-size: 14px;color: #404040;font-weight: 600">进行中的项目</p>
                 <a-tabs default-active-key="1" size="small" :tabBarStyle="{textAlign: 'center'}">
                   <a-tab-pane key="1" tab="非定制项目">
@@ -151,7 +151,7 @@
                       >
                         <a-tab-pane v-for="(item, index) in nonProgressTaskData" :key="index" :tab="item.proName">
                           <a-row style="padding-left: 24px;padding-right: 24px;">
-                            <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">基本信息</span></a-col>
+                            <a-col style="margin-bottom: 15px"><span style="font-size: 16px;font-weight: 550;color: #000c17">基本信息</span></a-col>
                             <a-col :span="8"><b class="item_title">项目名称：</b>{{ item.proName }}</a-col>
                             <a-col :span="8"><b class="item_title">订单编号：</b>{{ item.code !== null ? item.code : '- -' }}</a-col>
                             <a-col :span="8"><b class="item_title">联系方式：</b>{{ item.contact !== null ? item.contact : '- -' }}</a-col>
@@ -438,7 +438,7 @@ export default {
 </script>
 <style lang="less">
   .item_title {
-    font-size: 12px;
+    font-size: 13px;
   }
   .home-page {
     .head-info {

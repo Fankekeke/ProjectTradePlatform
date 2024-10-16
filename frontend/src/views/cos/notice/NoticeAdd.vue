@@ -2,41 +2,47 @@
   <a-drawer
     title="新增公告"
     :maskClosable="false"
-    width=850
+    width="100%"
     placement="right"
     :closable="false"
     @close="onClose"
     :visible="userAddVisiable"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
-
-
     <a-form :form="form">
-      <a-form-item label='公告标题' v-bind="formItemLayout">
-        <a-input v-decorator="[
-        'messTitle',
-        { rules: [{ required: true, message: '请输入名称!' }] }
-        ]"/>
-      </a-form-item>
-      <a-form-item label='发帖人' v-bind="formItemLayout">
-        <a-input v-decorator="[
-        'messUser',
-        { rules: [{ required: true, message: '请输入作者!' }] }
-        ]"/>
-      </a-form-item>
-      <a-form-item label='公告类别' v-bind="formItemLayout">
-        <a-select v-decorator="[
-        'messType'
-        ]">
-          <a-select-option value="0">突击事件</a-select-option>
-          <a-select-option value="1">正常新闻</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item label='内容' v-bind="formItemLayout">
-        <editor-bar  v-model="editor.info" :isClear="isClear" @change="change" style="width: 100%"></editor-bar>
-      </a-form-item>
-
+      <a-row :gutter="15">
+        <a-col :span="8">
+          <a-form-item label='公告标题'>
+            <a-input v-decorator="[
+            'messTitle',
+            { rules: [{ required: true, message: '请输入名称!' }] }
+            ]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="8">
+          <a-form-item label='发帖人'>
+            <a-input v-decorator="[
+            'messUser',
+            { rules: [{ required: true, message: '请输入作者!' }] }
+            ]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="8">
+          <a-form-item label='公告类别'>
+            <a-select v-decorator="[
+              'messType'
+              ]">
+              <a-select-option value="0">突击事件</a-select-option>
+              <a-select-option value="1">正常新闻</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="24">
+          <a-form-item label='内容'>
+            <editor-bar  v-model="editor.info" :isClear="isClear" @change="change" style="width: 100%"></editor-bar>
+          </a-form-item>
+        </a-col>
+      </a-row>
     </a-form>
-
     <div class="drawer-bootom-button">
       <a-popconfirm title="确定放弃编辑？" @confirm="onClose" okText="确定" cancelText="取消">
         <a-button style="margin-right: .8rem">取消</a-button>
