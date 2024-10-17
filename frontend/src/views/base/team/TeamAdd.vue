@@ -9,45 +9,59 @@
     :visible="teamAddVisiable"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <a-form :form="form">
-      <a-form-item label="成员名称" v-bind="formItemLayout">
-        <a-input v-decorator="['players',{rules: [{ required: true, message: '请填写成员名称' }]}]"/>
-      </a-form-item>
-      <a-form-item label="所属人员" v-bind="formItemLayout">
-        <a-select show-search :filter-option="filterOption" v-decorator="['adminUser',{rules: [{ required: true, message: '请填写所属人员' }]}]">
-          <a-select-option v-for="(item, index) in adminUserData" :key="index" :value="item.userId">{{ item.username }}</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item label="工作时间" v-bind="formItemLayout">
-        <a-input v-decorator="['workTime']"/>
-      </a-form-item>
-      <a-form-item label="部署时间" v-bind="formItemLayout">
-        <a-input v-decorator="['deployTime']"/>
-      </a-form-item>
-      <a-form-item label="备 注" v-bind="formItemLayout">
-        <a-textarea v-decorator="['remarks']"/>
-      </a-form-item>
-      <!--      https://yxblshop.cn:9528/file/fileUpload/-->
-      <!--      http://127.0.0.1:9528/file/fileUpload/-->
-      <a-form-item label='头像' v-bind="formItemLayout">
-        <a-upload
-          name="avatar"
-          action="http://127.0.0.1:9528/file/fileUpload/"
-          list-type="picture-card"
-          :file-list="fileList"
-          @preview="handlePreview"
-          @change="picHandleChange"
-        >
-          <div v-if="fileList.length < 1">
-            <a-icon type="plus" />
-            <div class="ant-upload-text">
-              Upload
-            </div>
-          </div>
-        </a-upload>
-        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-          <img alt="example" style="width: 100%" :src="previewImage" />
-        </a-modal>
-      </a-form-item>
+      <a-row :gutter="15">
+        <a-col :span="12">
+          <a-form-item label="成员名称">
+            <a-input v-decorator="['players',{rules: [{ required: true, message: '请填写成员名称' }]}]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="所属人员">
+            <a-select show-search :filter-option="filterOption" v-decorator="['adminUser',{rules: [{ required: true, message: '请填写所属人员' }]}]">
+              <a-select-option v-for="(item, index) in adminUserData" :key="index" :value="item.userId">{{ item.username }}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="工作时间">
+            <a-input v-decorator="['workTime']"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="部署时间">
+            <a-input v-decorator="['deployTime']"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="24">
+          <a-form-item label="备 注">
+            <a-textarea v-decorator="['remarks']"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="24">
+          <!--      https://yxblshop.cn:9528/file/fileUpload/-->
+          <!--      http://127.0.0.1:9528/file/fileUpload/-->
+          <a-form-item label='头像'>
+            <a-upload
+              name="avatar"
+              action="http://127.0.0.1:9528/file/fileUpload/"
+              list-type="picture-card"
+              :file-list="fileList"
+              @preview="handlePreview"
+              @change="picHandleChange"
+            >
+              <div v-if="fileList.length < 1">
+                <a-icon type="plus" />
+                <div class="ant-upload-text">
+                  Upload
+                </div>
+              </div>
+            </a-upload>
+            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+              <img alt="example" style="width: 100%" :src="previewImage" />
+            </a-modal>
+          </a-form-item>
+        </a-col>
+      </a-row>
     </a-form>
       <div class="drawer-bootom-button">
         <a-popconfirm title="确定放弃编辑？" @confirm="onClose" okText="确定" cancelText="取消">

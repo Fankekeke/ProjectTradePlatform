@@ -9,46 +9,68 @@
     :visible="schoolEditVisiable"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <a-form :form="form">
-      <a-form-item label="学校名称" v-bind="formItemLayout">
-        <a-input v-decorator="['name',{rules: [{ required: true, message: '请填写学校名称' }]}]"/>
-      </a-form-item>
-      <a-form-item label="学校地址" v-bind="formItemLayout">
-        <a-input v-decorator="['address',{rules: [{ required: true, message: '请填写学校地址' }]}]"/>
-      </a-form-item>
-      <a-form-item label="所在城市" v-bind="formItemLayout">
-        <a-select
-          :allowClear="true"
-          style="width: 100%"
-          show-search
-          :default-active-first-option="false"
-          :show-arrow="false"
-          :filter-option="false"
-          @search="handleSearch"
-          v-decorator="['cityId',{rules: [{ required: true, message: '请选择所在城市' }]}]">
-          <a-select-option v-for="r in cityData" :key="r.id">{{r.name}}</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item label="主管部门" v-bind="formItemLayout">
-        <a-input v-decorator="['manage']"/>
-      </a-form-item>
-      <a-form-item label="学校地区" v-bind="formItemLayout">
-        <a-input v-decorator="['area']"/>
-      </a-form-item>
-      <a-form-item label="人 数" v-bind="formItemLayout">
-        <a-input-number v-decorator="['number']" :min="1" :step="1" style="width: 100%"/>
-      </a-form-item>
-      <a-form-item label="网 址" v-bind="formItemLayout">
-        <a-input v-decorator="['http']"/>
-      </a-form-item>
-      <a-form-item label="层 次" v-bind="formItemLayout">
-        <a-input v-decorator="['level']"/>
-      </a-form-item>
-      <a-form-item label="类 型" v-bind="formItemLayout">
-        <a-input v-decorator="['type']"/>
-      </a-form-item>
-      <a-form-item label="备 注" v-bind="formItemLayout">
-        <a-textarea v-decorator="['desc']"/>
-      </a-form-item>
+      <a-row :gutter="15">
+        <a-col :span="12">
+          <a-form-item label="学校名称">
+            <a-input v-decorator="['name',{rules: [{ required: true, message: '请填写学校名称' }]}]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="学校地址">
+            <a-input v-decorator="['address',{rules: [{ required: true, message: '请填写学校地址' }]}]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="所在城市">
+            <a-select
+              :allowClear="true"
+              style="width: 100%"
+              show-search
+              :default-active-first-option="false"
+              :show-arrow="false"
+              :filter-option="false"
+              @search="handleSearch"
+              v-decorator="['cityId',{rules: [{ required: true, message: '请选择所在城市' }]}]">
+              <a-select-option v-for="r in cityData" :key="r.id">{{r.name}}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="主管部门">
+            <a-input v-decorator="['manage']"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="学校地区">
+            <a-input v-decorator="['area']"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="人 数">
+            <a-input-number v-decorator="['number']" :min="1" :step="1" style="width: 100%"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="网 址">
+            <a-input v-decorator="['http']"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="层 次">
+            <a-input v-decorator="['level']"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="类 型">
+            <a-input v-decorator="['type']"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="24">
+          <a-form-item label="备 注">
+            <a-textarea v-decorator="['desc']"/>
+          </a-form-item>
+        </a-col>
+      </a-row>
     </a-form>
     <div class="drawer-bootom-button">
       <a-popconfirm title="确定放弃编辑？" @confirm="onClose" okText="确定" cancelText="取消">
