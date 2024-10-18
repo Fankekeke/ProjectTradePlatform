@@ -8,8 +8,8 @@
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="发送方式"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
                 <a-select
                   :allowClear="true"
                   v-model="queryParams.sendType"
@@ -22,8 +22,8 @@
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="消息类型"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
                 <a-select
                   :allowClear="true"
                   v-model="queryParams.messageType"
@@ -39,8 +39,8 @@
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="发送时间"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
                 <a-range-picker @change="onPickerChange" />
               </a-form-item>
             </a-col>

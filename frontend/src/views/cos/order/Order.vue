@@ -8,8 +8,8 @@
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="所属项目"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
                 <a-select v-model="queryParams.proCode">
                   <a-select-option value="-1">全部</a-select-option>
                   <a-select-option :value="item.code" v-for="(item, index) in projectList" :key="index">{{ item.proName }}</a-select-option>
@@ -19,8 +19,8 @@
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="订单状态"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
                 <a-select v-model="queryParams.orderStatus">
                   <a-select-option value="-2">全部</a-select-option>
                   <a-select-option value="-1">已取消</a-select-option>
@@ -32,8 +32,8 @@
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="是否过期"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
                 <a-select v-model="queryParams.isExpired">
                   <a-select-option value="-1">全部</a-select-option>
                   <a-select-option value="0">未过期</a-select-option>
@@ -44,8 +44,8 @@
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="支付方式"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
                 <a-select v-model="queryParams.paymentType">
                   <a-select-option value="-1">全部</a-select-option>
                   <a-select-option value="1">支付宝</a-select-option>
