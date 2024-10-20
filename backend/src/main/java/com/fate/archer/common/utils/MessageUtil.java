@@ -27,7 +27,7 @@ public class MessageUtil {
     /**
      * 发送门户端消息
      * @param userCodeList 用户编号
-     * @param title 消息标题1
+     * @param title 消息标题
      * @param content 消息内容
      */
     public void sendMessage(List<String> userCodeList, String title, String content) {
