@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import javax.jms.Destination;
 import java.util.List;
 
+/**
+ * 消息通知
+ */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class MessageUtil {
