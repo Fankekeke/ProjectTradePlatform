@@ -176,7 +176,8 @@
           <a-col :span="24" style="line-height: 30px;margin-top: 20px">
             <a-upload
               list-type="picture-card"
-              :file-list="fileList">
+              :file-list="fileList"
+              @preview="handlePreview">
             </a-upload>
             <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
               <img alt="example" style="width: 100%" :src="previewImage" />
@@ -251,6 +252,13 @@ export default {
     this.getRate('platform')
   },
   methods: {
+    async handlePreview (file) {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
     orderDetailed (code) {
       this.$get('/cos/order-info/detailed', {orderCode: code}).then((r) => {
         this.orderInfo = r.data.orderInfo

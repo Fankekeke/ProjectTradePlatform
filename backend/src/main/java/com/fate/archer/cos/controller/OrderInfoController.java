@@ -105,8 +105,8 @@ public class OrderInfoController {
      * @return 订单详情
      */
     @Log("订单详情")
-    @GetMapping("/detailed/{orderCode}")
-    public R orderInfoDetailed(@PathVariable("orderCode") String orderCode) {
+    @GetMapping("/detailed")
+    public R orderInfoDetailed(@RequestParam("orderCode") String orderCode) {
         return R.ok(iOrderInfoService.orderInfoDetailed(orderCode));
     }
 

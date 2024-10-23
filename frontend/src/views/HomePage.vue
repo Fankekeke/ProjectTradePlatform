@@ -136,7 +136,7 @@
             <a-card hoverable>
               <div style="height: 397px;padding: 8px 15px;overflow-y: auto;font-family: SimHei">
                 <p style="font-size: 14px;color: #404040;font-weight: 600">进行中的项目</p>
-                <a-tabs default-active-key="1" size="small" :tabBarStyle="{textAlign: 'center'}">
+                <a-tabs default-active-key="1" size="small" :tabBarStyle="{textAlign: 'right'}">
                   <a-tab-pane key="1" tab="非定制项目">
                     <a-result title="目前没有进行的项目!" v-if="nonProgressTaskData.length === 0">
                       <template #icon>
