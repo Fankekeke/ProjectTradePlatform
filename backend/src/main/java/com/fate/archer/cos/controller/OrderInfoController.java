@@ -111,7 +111,7 @@ public class OrderInfoController {
     }
 
     /**
-     * 项目成交量更新1
+     * 项目成交量更新
      *
      * @param proCode 项目编号
      */
