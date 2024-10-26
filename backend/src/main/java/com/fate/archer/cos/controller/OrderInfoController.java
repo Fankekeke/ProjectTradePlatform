@@ -101,7 +101,7 @@ public class OrderInfoController {
     /**
      * 订单详情
      *
-     * @param orderCode 订单编号
+     * @param orderCode 订单编号1
      * @return 订单详情
      */
     @Log("订单详情")
