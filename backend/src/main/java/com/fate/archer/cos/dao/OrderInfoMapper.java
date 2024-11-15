@@ -22,7 +22,7 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      * @param orderInfo 订单信息
      * @return 订单信息列表
      */
-    IPage<OrderInfo> getOrderInfoByPage(Page page, @Param("orderInfo") OrderInfo orderInfo);
+    IPage<OrderInfo> getOrderInfoByPage(Page<?> page, @Param("orderInfo") OrderInfo orderInfo);
 
     /**
      * 使用兑换码兑换
@@ -47,7 +47,7 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      * @param userCode 用户编号
      * @return 用户历史订单
      */
-    IPage<OrderInfo> orderHistoryByUserCodePage(Page page, @Param("userCode") String userCode);
+    IPage<OrderInfo> orderHistoryByUserCodePage(Page<?> page, @Param("userCode") String userCode);
 
     /**
      * 系统主页订单统计
@@ -145,7 +145,7 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      * @param userCode 用户编号
      * @return 订单信息
      */
-    IPage<LinkedHashMap<String, Object>> orderListByUser(Page page, @Param("userCode") String userCode);
+    IPage<LinkedHashMap<String, Object>> orderListByUser(Page<?> page, @Param("userCode") String userCode);
 
     /**
      * 根据订单编号获取详细信息

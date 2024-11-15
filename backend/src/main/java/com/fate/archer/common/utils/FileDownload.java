@@ -4,6 +4,7 @@ import com.fate.archer.common.domain.BusinessConstant;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.file.Files;
 
 /**
  * @author FanK
@@ -19,7 +20,7 @@ public class FileDownload {
         OutputStream os = null;
         try {
             os = response.getOutputStream();
-            bis = new BufferedInputStream(new FileInputStream(new File(fileAddress + fileName)));
+            bis = new BufferedInputStream(Files.newInputStream(new File(fileAddress + fileName).toPath()));
             int i = bis.read(buff);
             while (i != -1) {
                 os.write(buff, 0, buff.length);

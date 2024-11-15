@@ -192,4 +192,14 @@ public class BusinessConstant {
      * 提现金额标准
      */
     public static final BigDecimal TASK_MONEY_STANDARD = new BigDecimal("50");
+
+    /**
+     * 附件订单标识
+     */
+    public static final String ANNEX_ORDER = "AORD";
+
+    /**
+     * 普通订单标识
+     */
+    public static final String COMMON_ORDER = "ORD";
 }

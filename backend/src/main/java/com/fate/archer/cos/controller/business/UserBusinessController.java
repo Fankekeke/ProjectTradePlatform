@@ -184,9 +184,9 @@ public class UserBusinessController {
     @ResponseBody
     @GetMapping("/orderInfoByCode")
     public R orderInfoByCode(@RequestParam("orderCode") String orderCode) {
-        if (orderCode.contains("AORD")) {
+        if (orderCode.contains(BusinessConstant.ANNEX_ORDER)) {
             return R.ok(annexOrderService.annexOrderInfoByCode(orderCode));
-        } else if (orderCode.contains("ORD")) {
+        } else if (orderCode.contains(BusinessConstant.COMMON_ORDER)) {
             return R.ok(orderInfoService.orderInfoByCode(orderCode));
         } else {
             return R.ok();
