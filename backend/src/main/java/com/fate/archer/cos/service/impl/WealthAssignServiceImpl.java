@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,7 @@ public class WealthAssignServiceImpl extends ServiceImpl<WealthAssignMapper, Wea
         }
 
         // 佣金分配比率
-        Map<String, BigDecimal> rateMap = new HashMap<String, BigDecimal>() {
+        Map<String, BigDecimal> rateMap = new HashMap<String, BigDecimal>(16) {
             {
                 put("developer", new BigDecimal("74"));
                 put("platform", new BigDecimal("26"));
@@ -78,15 +79,21 @@ public class WealthAssignServiceImpl extends ServiceImpl<WealthAssignMapper, Wea
         wealthAssign.setDevelopera(annexInfo.getUserId());
         wealthAssign.setCreateDate(DateUtil.formatDateTime(new Date()));
         // 平台收益
-        BigDecimal platformWealth = wealthAssign.getWealth().multiply(rateMap.get("platform")).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal platformWealth = wealthAssign.getWealth().multiply(rateMap.get("platform")).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
         wealthAssign.setPlatformBalance(platformWealth);
         // 开发者收益
-        BigDecimal developerWealth = wealthAssign.getWealth().multiply(rateMap.get("developer")).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal developerWealth = wealthAssign.getWealth().multiply(rateMap.get("developer")).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
         wealthAssign.setDeveloperBalance(developerWealth);
 
         return this.save(wealthAssign);
     }
 
+    /**
+     * 审核通过后佣金分配
+     *
+     * @param wealthAssign 佣金分配
+     * @return 返回结果
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean wealthAssign(WealthAssign wealthAssign) {
@@ -103,7 +110,7 @@ public class WealthAssignServiceImpl extends ServiceImpl<WealthAssignMapper, Wea
             rateInfoInvite = rateInfoService.getOne(Wrappers.<RateInfo>lambdaQuery().eq(RateInfo::getRole, "invite")
                     .eq(RateInfo::getFlag, 2).eq(RateInfo::getIsInvite, 1));
             // 邀请人分配
-            wealthAssign.setInviteBalance(rateInfoInvite.getRate().multiply(wealthAssign.getWealth()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP));
+            wealthAssign.setInviteBalance(rateInfoInvite.getRate().multiply(wealthAssign.getWealth()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
             UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getCode, wealthAssign.getInviteCode()));
             userInfoService.update(Wrappers.<UserInfo>lambdaUpdate()
                     .set(UserInfo::getBalance, userInfo.getBalance().add(wealthAssign.getInviteBalance()))
@@ -115,17 +122,23 @@ public class WealthAssignServiceImpl extends ServiceImpl<WealthAssignMapper, Wea
                     .eq(RateInfo::getFlag, 2).eq(RateInfo::getIsInvite, 0));
         }
         // 开发者分配
-        wealthAssign.setDeveloperBalance(rateInfoDeveloper.getRate().multiply(wealthAssign.getWealth()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP));
+        wealthAssign.setDeveloperBalance(rateInfoDeveloper.getRate().multiply(wealthAssign.getWealth()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
         TeamInfo teamInfo = teamInfoService.getOne(Wrappers.<TeamInfo>lambdaQuery().eq(TeamInfo::getId, wealthAssign.getDevelopera()));
         teamInfoService.update(Wrappers.<TeamInfo>lambdaUpdate()
                 .set(TeamInfo::getBalance, teamInfo.getBalance().add(wealthAssign.getDeveloperBalance()))
                 .eq(TeamInfo::getId, wealthAssign.getDevelopera()));
         // 平台分配
-        wealthAssign.setPlatformBalance(rateInfoPlatform.getRate().multiply(wealthAssign.getWealth()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP));
+        wealthAssign.setPlatformBalance(rateInfoPlatform.getRate().multiply(wealthAssign.getWealth()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
         wealthAssign.setCreateDate(DateUtil.formatDateTime(new Date()));
         return this.save(wealthAssign);
     }
 
+    /**
+     * 定制审核通过佣金分配
+     *
+     * @param wealthAssign 佣金分配
+     * @return 返回结果
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean wealthAssignCustomize(WealthAssign wealthAssign) {
@@ -142,7 +155,7 @@ public class WealthAssignServiceImpl extends ServiceImpl<WealthAssignMapper, Wea
             rateInfoInvite = rateInfoService.getOne(Wrappers.<RateInfo>lambdaQuery().eq(RateInfo::getRole, "invite")
                     .eq(RateInfo::getFlag, 1).eq(RateInfo::getIsInvite, 1));
             // 邀请人分配
-            wealthAssign.setInviteBalance(rateInfoInvite.getRate().multiply(wealthAssign.getWealth()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP));
+            wealthAssign.setInviteBalance(rateInfoInvite.getRate().multiply(wealthAssign.getWealth()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
             UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getCode, wealthAssign.getInviteCode()));
             userInfoService.update(Wrappers.<UserInfo>lambdaUpdate()
                     .set(UserInfo::getBalance, userInfo.getBalance().add(wealthAssign.getInviteBalance()))
@@ -154,7 +167,7 @@ public class WealthAssignServiceImpl extends ServiceImpl<WealthAssignMapper, Wea
                     .eq(RateInfo::getFlag, 1).eq(RateInfo::getIsInvite, 0));
         }
         // 开发者分配
-        wealthAssign.setDeveloperBalance(rateInfoDeveloper.getRate().multiply(wealthAssign.getWealth()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP));
+        wealthAssign.setDeveloperBalance(rateInfoDeveloper.getRate().multiply(wealthAssign.getWealth()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
         int developerNum = 0;
         if (wealthAssign.getDevelopera() != null) {
             developerNum++;
@@ -171,23 +184,23 @@ public class WealthAssignServiceImpl extends ServiceImpl<WealthAssignMapper, Wea
         if (wealthAssign.getDevelopera() != null) {
             TeamInfo teamInfo = teamInfoService.getOne(Wrappers.<TeamInfo>lambdaQuery().eq(TeamInfo::getId, wealthAssign.getDevelopera()));
             teamInfoService.update(Wrappers.<TeamInfo>lambdaUpdate()
-                    .set(TeamInfo::getBalance, teamInfo.getBalance().add(wealthAssign.getDeveloperBalance().divide(new BigDecimal(developerNum), 2, BigDecimal.ROUND_HALF_UP)))
+                    .set(TeamInfo::getBalance, teamInfo.getBalance().add(wealthAssign.getDeveloperBalance().divide(new BigDecimal(developerNum), 2, RoundingMode.HALF_UP)))
                     .eq(TeamInfo::getId, wealthAssign.getDevelopera()));
         }
         if (wealthAssign.getDeveloperb() != null) {
             TeamInfo teamInfo = teamInfoService.getOne(Wrappers.<TeamInfo>lambdaQuery().eq(TeamInfo::getId, wealthAssign.getDeveloperb()));
             teamInfoService.update(Wrappers.<TeamInfo>lambdaUpdate()
-                    .set(TeamInfo::getBalance, teamInfo.getBalance().add(wealthAssign.getDeveloperBalance().divide(new BigDecimal(developerNum), 2, BigDecimal.ROUND_HALF_UP)))
+                    .set(TeamInfo::getBalance, teamInfo.getBalance().add(wealthAssign.getDeveloperBalance().divide(new BigDecimal(developerNum), 2, RoundingMode.HALF_UP)))
                     .eq(TeamInfo::getId, wealthAssign.getDeveloperb()));
         }
         if (wealthAssign.getDeveloperb() != null) {
             TeamInfo teamInfo = teamInfoService.getOne(Wrappers.<TeamInfo>lambdaQuery().eq(TeamInfo::getId, wealthAssign.getDeveloperc()));
             teamInfoService.update(Wrappers.<TeamInfo>lambdaUpdate()
-                    .set(TeamInfo::getBalance, teamInfo.getBalance().add(wealthAssign.getDeveloperBalance().divide(new BigDecimal(developerNum), 2, BigDecimal.ROUND_HALF_UP)))
+                    .set(TeamInfo::getBalance, teamInfo.getBalance().add(wealthAssign.getDeveloperBalance().divide(new BigDecimal(developerNum), 2, RoundingMode.HALF_UP)))
                     .eq(TeamInfo::getId, wealthAssign.getDeveloperc()));
         }
         // 平台分配
-        wealthAssign.setPlatformBalance(rateInfoPlatform.getRate().multiply(wealthAssign.getWealth()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP));
+        wealthAssign.setPlatformBalance(rateInfoPlatform.getRate().multiply(wealthAssign.getWealth()).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP));
         wealthAssign.setCreateDate(DateUtil.formatDateTime(new Date()));
         return this.save(wealthAssign);
     }

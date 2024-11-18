@@ -71,7 +71,7 @@ public interface IProjectInfoService extends IService<ProjectInfo> {
      *
      * @param productCode 项目编号
      * @return 项目信息详情
-     * @throws  Exception 异常
+     * @throws Exception 异常
      */
     ProductDetailVo productDetail(String productCode) throws Exception;
 

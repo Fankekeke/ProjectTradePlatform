@@ -36,7 +36,6 @@ public interface IWealthAssignService extends IService<WealthAssign> {
      * @param wealthAssign 佣金分配
      * @return 返回结果
      */
-
     boolean wealthAssignCustomize(WealthAssign wealthAssign);
 
     /**

@@ -55,7 +55,7 @@ public class WealthAssignController {
      * @throws Exception 异常
      */
     @GetMapping("/wealth/developer")
-    public R selectWealthPartByPlatform() throws Exception{
+    public R selectWealthPartByPlatform() throws Exception {
         return R.ok(wealthAssignService.selectWealthPartByPlatform());
     }
 }

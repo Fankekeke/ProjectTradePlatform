@@ -58,8 +58,8 @@ public class WebController {
     /**
      * 页面跳转
      *
-     * @param
-     * @return
+     * @param page 页面
+     * @return 结果
      */
     @RequestMapping("{page}")
     public String showPage(@PathVariable("page") String page) {
@@ -69,9 +69,9 @@ public class WebController {
     /**
      * 项目主页面
      *
-     * @param model
-     * @param session
-     * @return
+     * @param model   model
+     * @param session session
+     * @return 结果
      */
     @RequestMapping(value = "index.html")
     public String init(Model model, HttpSession session) {
@@ -143,6 +143,7 @@ public class WebController {
 
     /**
      * 历史订单页面
+     *
      * @param pageNo
      * @param model
      * @param session

@@ -158,8 +158,9 @@ public class ProjectInfoController {
 
     /**
      * 根据用户学校获取项目交易信息
+     *
      * @param productCode 项目编号
-     * @param userCode 用户编号
+     * @param userCode    用户编号
      * @return 项目交易信息
      */
     @GetMapping("/trade/school")
